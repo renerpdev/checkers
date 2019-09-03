@@ -10,7 +10,9 @@
     "start": "webpack-dev-server --mode development --config webpack/webpack.dev.js --open"
   },
   "keywords": [
-    "javascript","checkers","game"
+    "javascript",
+    "checkers",
+    "game"
   ],
   "author": "renerp2016@gmail.com",
   "license": "MIT",

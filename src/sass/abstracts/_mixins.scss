@@ -1,0 +1,44 @@
+// RESPONSIVE QUERIES
+/*
+0 - 576px         phone-portrait
+576 - 768px       phone-landscape
+768px - 992px     tablet-portrait
+992px - 1200px    tablet-landscape
+1200px -  1800px  default-styles
+1800px - ...      large-desktops
+ */
+
+/*
+RESPONSIVE BREAKPOINTS
+- phone
+- phone-land
+- tab-port
+- tab-land
+- big-desk
+ */
+@mixin responsive($breakpoint) {
+  @if $breakpoint == phone{
+    @media (max-width: 576px) {
+      @content
+    };
+  }@if $breakpoint == phone-land {
+    @media (max-width: 768px) {
+      @content
+    };
+  }
+  @if $breakpoint == tab-port {
+    @media (max-width: 992px) {
+      @content
+    };
+  }
+  @if $breakpoint == tab-land {
+    @media (max-width: 1200px) {
+      @content
+    };
+  }
+  @if $breakpoint == big-desk {
+    @media (min-width: 1800px) {
+      @content
+    };
+  }
+}

@@ -1,0 +1,26 @@
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+  font-family: inherit;
+}
+
+html {
+  font-size: 62.5%; // means 10px = 1rem
+}
+
+body {
+  line-height: 1.5;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  color: $black_color;
+  font-size: 1.6rem;
+  font-family: OpenSans, 'Open Sans', sans-serif;
+  background-color: $tertiary_color;
+}
+
+html,body{
+  height: 100%;
+}

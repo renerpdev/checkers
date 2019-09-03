@@ -1,0 +1,38 @@
+extends templates/main
+
+block metatags
+    title Index
+
+block content
+    .vh-100.d-flex.flex-column
+        include pug/nav
+        .container.py-5.d-flex.flex-column.justify-content-center.align-items-center.flex-grow-1
+            h1.primary-heading.font-weight-bold.text-white Welcome to html-shell
+            .row
+                .col-md-4.p-2
+                    .service-item
+                        .service-item__icon
+                            i.fas.fa-hammer.mx-2(aria-hidden=true)
+                        .service-item__desc
+                            h3 Maintainable
+                .col-md-4.p-2
+                    .service-item
+                        .service-item__icon
+                            i.fas.fa-mobile-alt.mx-2(aria-hidden=true)
+                        .service-item__desc
+                            h3 Flexible
+                .col-md-4.p-2
+                    .service-item
+                        .service-item__icon
+                            i.fas.fa-globe.mx-2(aria-hidden=true)
+                        .service-item__desc
+                            h3 Modern
+            q.w-75.mx-auto.my-4.text-white.quoted-text Lorem ipsum dolor sit amet, consectetur adipisicing elit. At dicta dolores et nesciunt officiis pariatur quasi vero voluptatum. Adipisci asperiores atque autem doloribus eligendi nemo quo rerum sint totam voluptatem.
+            .text-center
+                a.text-white(href="")
+                    i.fab.fa-facebook-square.mx-2(aria-hidden=true)
+                a.text-white(href="")
+                    i.fab.fa-twitter-square.mx-2(aria-hidden=true)
+                a.text-white(href="")
+                    i.fab.fa-linkedin.mx-2(aria-hidden=true)
+        include pug/footer

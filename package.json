@@ -1,0 +1,52 @@
+{
+  "name": "js-checkers-game",
+  "version": "0.1.0",
+  "description": "js checkers game",
+  "main": "index.js",
+  "scripts": {
+    "init": "git init && git add . && git commit --message \"first commit\" && npm i && npm run start",
+    "build": "webpack  --mode production --config webpack/webpack.prod.js",
+    "dev": "webpack  --mode development --config webpack/webpack.dev.js",
+    "start": "webpack-dev-server --mode development --config webpack/webpack.dev.js --open"
+  },
+  "keywords": [
+    "javascript","checkers","game"
+  ],
+  "author": "renerp2016@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "autoprefixer": "^9.5.0",
+    "babel-loader": "^8.0.5",
+    "browserslist": "^4.5.4",
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^2.1.1",
+    "file-loader": "^3.0.1",
+    "html-loader": "^0.5.5",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.5.0",
+    "node-sass": "^4.11.0",
+    "post-loader": "^2.0.0",
+    "postcss-loader": "^3.0.0",
+    "pug": "^2.0.3",
+    "pug-loader": "^2.4.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "uglifyjs-webpack-plugin": "^2.1.2",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.2.1",
+    "webpack-merge": "^4.2.1"
+  },
+  "dependencies": {
+    "jquery": "^3.3.1"
+  },
+  "browserslist": [
+    "last 15 versions",
+    "> 1%",
+    "maintained node versions",
+    "not dead",
+    "iOS >= 9"
+  ]
+}

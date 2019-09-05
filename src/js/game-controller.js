@@ -1,5 +1,7 @@
 export const DARK_ROM = '@';
+export const DARK_QUEEN = '*';
 export const LIGHT_ROM = '0';
+export const LIGHT_QUEEN = '^';
 export const LIGHT_CELL = 'L';
 export const DARK_CELL = 'D';
 
@@ -7,16 +9,15 @@ export default class GameController {
     constructor() {
         this.gameBoard = [];
         this.gameTemplate = [];
-        this.init();
+    }
+
+    resetGame() {
+        this.gameTemplate = this.getInitialTemplate();
     }
 
     init() {
         this.createBoard();
-        this.setRoms(this.getInitialTemplate())
-    }
-
-    setRoms(template) {
-        this.gameTemplate = template;
+        this.resetGame();
     }
 
     createBoard() {

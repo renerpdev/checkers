@@ -8,20 +8,6 @@ module.exports = merge(baseConfig, {
     output: {
         filename: 'main.min.js',
     },
-    module: {
-        rules: [
-            {
-                test: /\.s?css$/,
-                use: [
-                    'style-loader',
-                    MiniCssExtractPlugin.loader,
-                    'css-loader',
-                    'postcss-loader',
-                    'sass-loader',
-                ],
-            },
-        ],
-    },
     optimization: {
         minimizer: [
             new UglifyJsPlugin({
@@ -45,7 +31,6 @@ module.exports = merge(baseConfig, {
             filename: '[name].min.css',
             chunkFilename: '[id].min.css'
         }),
-        // Minify CSS
         new webpack.LoaderOptionsPlugin({
             minimize: true,
         }),

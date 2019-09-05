@@ -1,7 +1,7 @@
 // Abstracts
 @import "abstracts/variables";
 @import "abstracts/mixins";
-@import "abstracts/functions";
+@import "abstracts/animations";
 // Base styles
 @import "base/typography";
 @import "base/reset";
@@ -12,5 +12,6 @@
 @import "layouts/game-wrapper";
 // Components
 @import "components/board";
+@import "components/game-splash";
 // Pages
 @import "pages/home";

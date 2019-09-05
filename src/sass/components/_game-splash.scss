@@ -1,0 +1,39 @@
+.game-splash {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: transparentize($black_color, .3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &__box {
+    text-align: center;
+    background-color: darken( $white_color,5);
+    border-radius: .5rem;
+    padding: 2rem;
+    animation-fill-mode: forwards;
+    animation: scaleUp .5s;
+    animation-timing-function: cubic-bezier(0.28, 0.51, 0.29, 1.32)
+  }
+  &__text {
+    color: $black_color;
+  }
+  &__button {
+    transition: all .15s ease-in-out;
+    background-color: $dark-cell-color;
+    margin: 1rem auto;
+    text-decoration: none;
+    color: $white_color;
+    padding: 1rem 1.5rem;
+    text-transform: uppercase;
+    border-radius: .5rem;
+    max-width: 20rem;
+    display: block;
+
+    &:hover {
+      background-color: lighten($dark-cell-color, 10);
+    }
+  }
+}

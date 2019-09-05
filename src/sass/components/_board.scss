@@ -1,7 +1,5 @@
 .board{
-  margin: auto;
-  height: 45rem;
-  width: 45rem;
+  margin: 1rem auto;
   display: grid;
   grid-template-columns: repeat(8,1fr);
   grid-template-rows: repeat(8,1fr);
@@ -12,9 +10,13 @@
     border: 2px solid $black_color;
     margin: 0;
     display: flex;
-    min-height: 5rem;
-    min-width: 5rem;
     padding: .2rem;
+    height: 5vw;
+    width: 5vw;
+    max-width: 6rem;
+    min-width: 4rem;
+    max-height: 6rem;
+    min-height: 4rem;
     img{
       height: 100%;
       width: 100%;

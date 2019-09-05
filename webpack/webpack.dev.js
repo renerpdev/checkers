@@ -12,26 +12,11 @@ module.exports = merge(baseConfig, {
         contentBase: path.resolve('./src'),
         port: '3001',
     },
-
-    module: {
-        rules: [
-            {
-                test: /\.s?css$/,
-                use: [
-                    'style-loader',
-                    MiniCssExtractPlugin.loader,
-                    'css-loader',
-                    'sass-loader',
-                ],
-            },
-        ],
-    },
     plugins:[
         new MiniCssExtractPlugin({
             filename: '[name].css',
             chunkFilename: '[id].css'
         }),
-        // Minify CSS
         new webpack.LoaderOptionsPlugin({
             minimize: false,
         }),

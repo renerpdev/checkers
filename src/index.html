@@ -9,8 +9,15 @@
 <title>Checkers Game</title>
 <body>
 <div class="game-wrapper">
-    <h2 class="primary-heading" >Checkers Game</h2>
+    <div class="game-splash">
+        <div class="game-splash__box">
+            <h1 class="game-splash__text" id="game-info-text">Do you wanna play?</h1>
+            <a href="javascript:game.resetGame()" class="game-splash__button">start game</a>
+        </div>
+    </div>
+    <h2 class="primary-heading">Checkers Game</h2>
     <div class="board"></div>
+    <a href="javascript:game.endGame(false)" class="game-splash__button">end game</a>
 </div>
 </body>
 </html>

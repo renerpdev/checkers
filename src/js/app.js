@@ -3,8 +3,8 @@ import GameUI from './game-ui'
 import './css-dnd'
 
 $(function () {
-    new GameUI('.board').init();
-});$(function () {
-    $('.dnd-droppable').droppable();
-    $('.dnd-draggable').draggable();
+    const game = new GameUI('.board');
+    window.game = game;
+    game.startGame();
 });
+

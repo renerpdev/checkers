@@ -1,4 +1,4 @@
-import GameController, {LIGHT_ROM, DARK_ROM, DARK_CELL, LIGHT_CELL} from './game-controller'
+import GameController, {LIGHT_ROM, DARK_ROM, DARK_CELL, LIGHT_CELL, LIGHT_QUEEN, DARK_QUEEN} from './game-controller'
 import * as $ from 'jquery'
 
 // BOARD ROMS
@@ -13,13 +13,34 @@ export default class GameUI {
         this.gameController = new GameController();
     }
 
-    init() {
-        this.paintBoard(this.gameController);
+    resetGame() {
+        this.gameController.resetGame();
+        this.paintBoard()
+        $('.game-splash').hide();
     }
 
-    paintBoard(controller) {
-        const boardRef = controller.getBoard();
-        const templateRef = controller.getTemplate();
+    startGame() {
+        this.gameController.init();
+        this.paintBoard();
+    }
+
+    addDnD() {
+        $(function () {
+            $('.dnd-droppable').droppable();
+            $('.dnd-draggable').draggable();
+        });
+    }
+
+    endGame(win) {
+        $('.game-splash__text')[0].innerText = win === true ? 'Congrats you win!' : 'You loose!';
+        $('.game-splash__button')[0].innerText = win === true ? 'One more' : 'play again';
+        $('.game-splash').show();
+    }
+
+    paintBoard() {
+        const boardRef = this.gameController.getBoard();
+        const templateRef = this.gameController.getTemplate();
+        this.board.empty();
         boardRef.forEach((row, i) => {
             row.forEach((cell, j) => {
                 const child = document.createElement('div');
@@ -34,6 +55,12 @@ export default class GameUI {
                 } else if (templateRef[i][j] === LIGHT_ROM) {
                     image.setAttribute('src', LIGHT_ROM_IMAGE);
                     child.appendChild(image);
+                } else if (templateRef[i][j] === DARK_QUEEN) {
+                    image.setAttribute('src', DARK_QUEEN_IMAGE);
+                    child.appendChild(image);
+                } else if (templateRef[i][j] === LIGHT_QUEEN) {
+                    image.setAttribute('src', LIGHT_QUEEN_IMAGE);
+                    child.appendChild(image);
                 }
                 if (cell === LIGHT_CELL) {
                     child.classList.add('board__cell--light')
@@ -43,5 +70,6 @@ export default class GameUI {
                 this.board.append(child);
             })
         })
+        this.addDnD();
     }
 }

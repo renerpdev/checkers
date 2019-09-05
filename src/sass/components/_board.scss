@@ -1,0 +1,30 @@
+.board{
+  margin: auto;
+  height: 45rem;
+  width: 45rem;
+  display: grid;
+  grid-template-columns: repeat(8,1fr);
+  grid-template-rows: repeat(8,1fr);
+  grid-gap: 1px;
+  box-shadow: 5px 5px 0px 0px darken($light-cell-color,15);
+
+  &__cell{
+    border: 2px solid $black_color;
+    margin: 0;
+    display: flex;
+    min-height: 5rem;
+    min-width: 5rem;
+    padding: .2rem;
+    img{
+      height: 100%;
+      width: 100%;
+      object-fit: contain;
+      object-position: center;
+    }
+    &--dark{
+      background-color: $dark-cell-color;
+    }&--light{
+      background-color: $light-cell-color;
+    }
+  }
+}

@@ -1,5 +1,10 @@
 import * as $ from 'jquery'
+import GameUI from './game-ui'
+import './css-dnd'
 
 $(function () {
-    console.log('Thanks for using html-shell!')
+    new GameUI('.board').init();
+});$(function () {
+    $('.dnd-droppable').droppable();
+    $('.dnd-draggable').draggable();
 });

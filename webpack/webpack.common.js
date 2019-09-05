@@ -54,8 +54,7 @@ module.exports = {
     plugins: [
         new webpack.ProgressPlugin(),
         new HtmlWebpackPlugin({
-            template: path.resolve("./src/index.pug"),
-            // template: "./src/index.html",
+            template: path.resolve("./src/index.html"),
             filename: "./index.html"
         }),
         new CleanWebpackPlugin(),

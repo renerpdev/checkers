@@ -12,6 +12,7 @@ html {
 }
 
 body {
+  user-select: none;
   line-height: 1.5;
   box-sizing: border-box;
   overflow-x: hidden;

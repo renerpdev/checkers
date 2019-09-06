@@ -1,6 +1,6 @@
 import GameController, {
     LIGHT_ROM, DARK_ROM, BLANK_CELL,
-    LIGHT_CELL, LIGHT_QUEEN, DARK_QUEEN
+    LIGHT_CELL, LIGHT_QUEEN, DARK_QUEEN, DARK_CELL
 } from './game-controller'
 import * as $ from 'jquery'
 
@@ -35,8 +35,10 @@ export default class GameUI {
         const [x, y] = start;
         const [x2, y2] = end;
         const template = this.gameController.getTemplate();
-        const row = template[x2];
-        return row !== undefined && row[y2] === BLANK_CELL
+        const board = this.gameController.getBoard();
+        const templateRow = template[x2];
+        const boardRow = board[x2];
+        return templateRow !== undefined && templateRow[y2] === BLANK_CELL && boardRow[y2] === LIGHT_CELL
     }
 
     addDnD() {

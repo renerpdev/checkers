@@ -1,10 +1,10 @@
-export const DARK_ROM = '@';
-export const DARK_QUEEN = '*';
-export const LIGHT_ROM = '0';
-export const LIGHT_QUEEN = '^';
-export const LIGHT_CELL = 'L';
-export const DARK_CELL = 'D';
-export const BLANK_CELL = ' ';
+export const DARK_ROM = 'DR';
+export const DARK_QUEEN = 'DQ';
+export const LIGHT_ROM = 'LR';
+export const LIGHT_QUEEN = 'LQ';
+export const LIGHT_CELL = 'LC';
+export const DARK_CELL = 'DC';
+export const BLANK_CELL = '  ';
 
 export default class GameController {
     constructor() {
@@ -43,22 +43,16 @@ export default class GameController {
     }
 
     getInitialTemplate() {
-        const template = [];
-        let rom, row;
-        for (let i = 0; i < 8; i++) {
-            rom = ' ';
-            row = [];
-            if (i === 0 || i === 1) {
-                rom = DARK_ROM;
-            }
-            if (i === 6 || i === 7) {
-                rom = LIGHT_ROM
-            }
-            for (let j = 0; j < 8; j++) {
-                row.push(rom)
-            }
-            template.push(row)
-        }
+        const template = [
+            [DARK_ROM,BLANK_CELL,DARK_ROM,BLANK_CELL,DARK_ROM,BLANK_CELL,DARK_ROM,BLANK_CELL],
+            [BLANK_CELL,DARK_ROM,BLANK_CELL,DARK_ROM,BLANK_CELL,DARK_ROM,BLANK_CELL,DARK_ROM],
+            [DARK_ROM,BLANK_CELL,DARK_ROM,BLANK_CELL,DARK_ROM,BLANK_CELL,DARK_ROM,BLANK_CELL],
+            [BLANK_CELL,BLANK_CELL,BLANK_CELL,BLANK_CELL,BLANK_CELL,BLANK_CELL,BLANK_CELL,BLANK_CELL],
+            [BLANK_CELL,BLANK_CELL,BLANK_CELL,BLANK_CELL,BLANK_CELL,BLANK_CELL,BLANK_CELL,BLANK_CELL],
+            [BLANK_CELL,LIGHT_ROM,BLANK_CELL,LIGHT_ROM,BLANK_CELL,LIGHT_ROM,BLANK_CELL,LIGHT_ROM],
+            [LIGHT_ROM,BLANK_CELL,LIGHT_ROM,BLANK_CELL,LIGHT_ROM,BLANK_CELL,LIGHT_ROM,BLANK_CELL],
+            [BLANK_CELL,LIGHT_ROM,BLANK_CELL,LIGHT_ROM,BLANK_CELL,LIGHT_ROM,BLANK_CELL,LIGHT_ROM],
+        ];
         return template;
     }
 

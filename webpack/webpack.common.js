@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack'); // to access built-in plugins
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
@@ -61,7 +61,17 @@ module.exports = {
             },
         ],
     },
-
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                commons: {
+                    test: /[\\/]node_modules[\\/](jquery)[\\/]/,
+                    filename: 'vendors.bundle.js',
+                    chunks: 'all'
+                }
+            }
+        }
+    },
     plugins: [
         new webpack.ProgressPlugin(),
         new HtmlWebpackPlugin({
@@ -70,5 +80,9 @@ module.exports = {
             favicon: path.resolve("./src/favicon.png")
         }),
         new CleanWebpackPlugin(),
+        new webpack.ProvidePlugin({
+            'jQuery': 'jquery',
+            '$': 'jquery',
+        })
     ],
 };

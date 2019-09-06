@@ -43,7 +43,7 @@ export default class GameUI {
         (($this) => {
             $(function () {
                 $('.dnd-droppable').droppable({
-                    onDrop: (event, callback) => {
+                    onDrop: (event) => {
                         const node = event.target;
                         const start = $this.fromCell.split('-');
                         const end = node.id.split('-');

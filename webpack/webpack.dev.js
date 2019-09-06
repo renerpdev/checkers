@@ -12,13 +12,13 @@ module.exports = merge(baseConfig, {
         contentBase: path.resolve('./src'),
         port: '3001',
     },
-    plugins:[
+    plugins: [
         new MiniCssExtractPlugin({
             filename: '[name].css',
             chunkFilename: '[id].css'
         }),
         new webpack.LoaderOptionsPlugin({
             minimize: false,
-        }),
+        })
     ]
 });

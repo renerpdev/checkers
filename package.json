@@ -41,6 +41,7 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
+    "css-dnd": "^1.2.0",
     "jquery": "^3.3.1"
   },
   "browserslist": [

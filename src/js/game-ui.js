@@ -14,7 +14,7 @@ export default class GameUI {
     constructor(boardSelector) {
         this.boardUI = $(boardSelector);
         this.gameController = new GameController();
-        this.fromCell = '';
+        this.draggedCell = '';
         //******************************//
         $('.game-splash').hide();// remove later!!!!!!
         //******************************//
@@ -32,13 +32,15 @@ export default class GameUI {
     }
 
     isValidMove(start, end) {
-        const [x, y] = start;
-        const [x2, y2] = end;
-        const template = this.gameController.getTemplate();
-        const board = this.gameController.getBoard();
-        const templateRow = template[x2];
-        const boardRow = board[x2];
-        return templateRow !== undefined && templateRow[y2] === BLANK_CELL && boardRow[y2] === LIGHT_CELL
+        if (start !== undefined && end !== undefined) {
+            const [x, y] = start.split('-');
+            const [x2, y2] = end.split('-');
+            const template = this.gameController.getTemplate();
+            const board = this.gameController.getBoard();
+            const templateRow = template[x2];
+            const boardRow = board[x2];
+            return templateRow !== undefined && templateRow[y2] === BLANK_CELL && boardRow[y2] === LIGHT_CELL
+        }
     }
 
     addDnD() {
@@ -47,23 +49,23 @@ export default class GameUI {
                 $('.dnd-droppable').droppable({
                     onDrop: (event) => {
                         const node = event.target;
-                        const start = $this.fromCell.split('-');
-                        const end = node.id.split('-');
+                        const start = $this.draggedCell;
+                        const end = $(node).data('coords');
                         if ($this.isValidMove(start, end)) {
-                            const [x, y] = start;
-                            const [x2, y2] = end;
+                            const [x, y] = start.split('-');
+                            const [x2, y2] = end.split('-');
                             const template = $this.gameController.getTemplate();
                             const oldValue = template[x][y];
                             $this.gameController.updateCell(x, y, BLANK_CELL);
                             $this.gameController.updateCell(x2, y2, oldValue);
                             console.log($this.gameController.gameTemplate);
-                            $this.paintBoard()
+                            $this.paintBoard();
                         }
                     },
                     onDragEnter: (event, callback) => {
                         const node = event.target;
-                        const start = $this.fromCell.split('-');
-                        const end = node.id.split('-');
+                        const start = $this.draggedCell;
+                        const end = $(node).data('coords');
                         if ($this.isValidMove(start, end)) {
                             callback()
                         }
@@ -72,7 +74,7 @@ export default class GameUI {
                 $('.dnd-draggable').draggable({
                     onDragStart: (ev, callback) => {
                         const parentNode = ev.target.parentNode;
-                        $this.fromCell = parentNode.id;
+                        $this.draggedCell = $(parentNode).data('coords');
                         callback();
                     }
                 });
@@ -97,7 +99,7 @@ export default class GameUI {
                 image.classList.add('dnd-draggable');
                 child.classList.add('board__cell');
                 child.classList.add('dnd-droppable');
-                child.setAttribute('id', i + '-' + j);
+                child.setAttribute('data-coords', i + '-' + j);
                 if (templateRef[i][j] === DARK_ROM) {
                     image.setAttribute('src', DARK_ROM_IMAGE);
                     child.appendChild(image);

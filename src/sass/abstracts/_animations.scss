@@ -6,3 +6,15 @@
     transform: scale(1);
   }
 }
+
+@keyframes color-changer {
+  0% {
+    background-color: $black_color;
+  }
+  50% {
+    background-color: lighten($black_color, 2);
+  }
+  100% {
+    background-color: $black_color;
+  }
+}

@@ -4,6 +4,7 @@ export const LIGHT_ROM = '0';
 export const LIGHT_QUEEN = '^';
 export const LIGHT_CELL = 'L';
 export const DARK_CELL = 'D';
+export const BLANK_CELL = ' ';
 
 export default class GameController {
     constructor() {
@@ -63,6 +64,10 @@ export default class GameController {
 
     getBoard() {
         return this.gameBoard;
+    }
+
+    updateCell(x, y, value) {
+        this.gameTemplate[x][y] = value;
     }
 
     getTemplate() {

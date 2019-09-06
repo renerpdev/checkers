@@ -1,13 +1,15 @@
-.board{
+.board {
   margin: 1rem auto;
   display: grid;
-  grid-template-columns: repeat(8,1fr);
-  grid-template-rows: repeat(8,1fr);
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
   grid-gap: 1px;
-  box-shadow: 5px 5px 0px 0px darken($light-cell-color,15);
+  box-shadow: 5px 5px 0px 0px darken($light-cell-color, 15);
+  background-color: darken($light-cell-color, 15);
+  border: 1px solid $black_color;
 
-  &__cell{
-    border: 2px solid $black_color;
+  &__cell {
+    border: 1px solid darken($light-cell-color, 15);
     margin: 0;
     display: flex;
     padding: .2rem;
@@ -17,15 +19,22 @@
     min-width: 4rem;
     max-height: 6rem;
     min-height: 4rem;
-    img{
+    img {
       height: 100%;
       width: 100%;
       object-fit: contain;
       object-position: center;
+      pointer-events: bounding-box;
     }
-    &--dark{
+    &--disabled {
+      img {
+        pointer-events: none;
+      }
+    }
+    &--dark {
       background-color: $dark-cell-color;
-    }&--light{
+    }
+    &--light {
       background-color: $light-cell-color;
     }
   }

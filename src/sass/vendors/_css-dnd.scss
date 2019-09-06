@@ -1,7 +1,7 @@
 .dnd{
   &--dragging{
     border-style: dashed !important;
-    border-color: $white_color !important;
-    background-color: $black_color !important;
+    border-color: $dark-cell-color !important;
+    background-color: darken($light-cell-color,15) !important;
   }
 }

@@ -1,4 +1,7 @@
-import GameController, {LIGHT_ROM, DARK_ROM, DARK_CELL, LIGHT_CELL, LIGHT_QUEEN, DARK_QUEEN} from './game-controller'
+import GameController, {
+    LIGHT_ROM, DARK_ROM, BLANK_CELL,
+    LIGHT_CELL, LIGHT_QUEEN, DARK_QUEEN
+} from './game-controller'
 import * as $ from 'jquery'
 
 // BOARD ROMS
@@ -9,8 +12,12 @@ const LIGHT_QUEEN_IMAGE = require('../images/light-queen.png');
 
 export default class GameUI {
     constructor(boardSelector) {
-        this.board = $(boardSelector);
+        this.boardUI = $(boardSelector);
         this.gameController = new GameController();
+        this.fromCell = '';
+        //******************************//
+        $('.game-splash').hide();// remove later!!!!!!
+        //******************************//
     }
 
     resetGame() {
@@ -24,11 +31,51 @@ export default class GameUI {
         this.paintBoard();
     }
 
+    isValidMove(start, end) {
+        const [x, y] = start;
+        const [x2, y2] = end;
+        const template = this.gameController.getTemplate();
+        const row = template[x2];
+        return row !== undefined && row[y2] === BLANK_CELL
+    }
+
     addDnD() {
-        $(function () {
-            $('.dnd-droppable').droppable();
-            $('.dnd-draggable').draggable();
-        });
+        (($this) => {
+            $(function () {
+                $('.dnd-droppable').droppable({
+                    onDrop: (event, callback) => {
+                        const node = event.target;
+                        const start = $this.fromCell.split('-');
+                        const end = node.id.split('-');
+                        if ($this.isValidMove(start, end)) {
+                            const [x, y] = start;
+                            const [x2, y2] = end;
+                            const template = $this.gameController.getTemplate();
+                            const oldValue = template[x][y];
+                            $this.gameController.updateCell(x, y, BLANK_CELL);
+                            $this.gameController.updateCell(x2, y2, oldValue);
+                            console.log($this.gameController.gameTemplate);
+                            $this.paintBoard()
+                        }
+                    },
+                    onDragEnter: (event, callback) => {
+                        const node = event.target;
+                        const start = $this.fromCell.split('-');
+                        const end = node.id.split('-');
+                        if ($this.isValidMove(start, end)) {
+                            callback()
+                        }
+                    }
+                });
+                $('.dnd-draggable').draggable({
+                    onDragStart: (ev, callback) => {
+                        const parentNode = ev.target.parentNode;
+                        $this.fromCell = parentNode.id;
+                        callback();
+                    }
+                });
+            });
+        })(this)
     }
 
     endGame(win) {
@@ -40,7 +87,7 @@ export default class GameUI {
     paintBoard() {
         const boardRef = this.gameController.getBoard();
         const templateRef = this.gameController.getTemplate();
-        this.board.empty();
+        this.boardUI.empty();
         boardRef.forEach((row, i) => {
             row.forEach((cell, j) => {
                 const child = document.createElement('div');
@@ -48,7 +95,7 @@ export default class GameUI {
                 image.classList.add('dnd-draggable');
                 child.classList.add('board__cell');
                 child.classList.add('dnd-droppable');
-                child.setAttribute('id', (i + 1) + '-' + (j + 1));
+                child.setAttribute('id', i + '-' + j);
                 if (templateRef[i][j] === DARK_ROM) {
                     image.setAttribute('src', DARK_ROM_IMAGE);
                     child.appendChild(image);
@@ -67,9 +114,9 @@ export default class GameUI {
                 } else {
                     child.classList.add('board__cell--dark')
                 }
-                this.board.append(child);
+                this.boardUI.append(child);
             })
-        })
+        });
         this.addDnD();
     }
 }

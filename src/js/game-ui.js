@@ -16,13 +16,13 @@ export default class GameUI {
         this.gameController = new GameController();
         this.draggedCell = '';
         //******************************//
-        $('.game-splash').hide();// remove later!!!!!!
+        // $('.game-splash').hide();// remove later!!!!!!
         //******************************//
     }
 
     resetGame() {
         this.gameController.resetGame();
-        this.paintBoard()
+        this.paintBoard();
         $('.game-splash').hide();
     }
 
@@ -102,6 +102,7 @@ export default class GameUI {
                 child.setAttribute('data-coords', i + '-' + j);
                 if (templateRef[i][j] === DARK_ROM) {
                     image.setAttribute('src', DARK_ROM_IMAGE);
+                    child.classList.add('board__cell--disabled')
                     child.appendChild(image);
                 } else if (templateRef[i][j] === LIGHT_ROM) {
                     image.setAttribute('src', LIGHT_ROM_IMAGE);

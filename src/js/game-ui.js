@@ -22,7 +22,7 @@ export default class GameUI {
 
     restartGame() {
         let againstAI = $('#ai')[0];
-        this.withAI = againstAI || false;
+        this.withAI = againstAI!==undefined ? againstAI.checked : false;
         this.gameController.resetGame(this.withAI);
         this.paintBoard();
         $('.game-splash').hide();
@@ -91,6 +91,7 @@ export default class GameUI {
     }
 
     paintBoard() {
+        console.log(this.withAI)
         const boardRef = this.gameController.getBoard();
         const templateRef = this.gameController.getTemplate();
         this.boardUI.empty();

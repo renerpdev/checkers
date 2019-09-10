@@ -19,6 +19,7 @@
   }
   &__text {
     color: $black_color;
+    max-width: 35rem;
   }
   &__button {
     transition: all .15s ease-in-out;

@@ -60,7 +60,7 @@ export default class GameUI {
                             const oldValue = template[x][y];
                             $this.gameController.updateCell(x, y, BLANK_CELL);
                             $this.gameController.updateCell(x2, y2, oldValue);
-                            console.log($this.gameController.gameTemplate);
+                            console.table($this.gameController.gameTemplate);
                             $this.paintBoard();
                         }
                     },

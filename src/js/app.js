@@ -6,7 +6,7 @@ import 'css-dnd';
     $(function () {
         const game = new GameUI('.board');
         window.game = game;
-        game.startGame();
+        game.createGame();
     });
 })(jQuery);
 

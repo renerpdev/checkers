@@ -20,15 +20,17 @@ export default class GameUI {
         //******************************//
     }
 
-    resetGame() {
-        this.gameController.resetGame();
+    restartGame() {
+        let againstAI = $('#ai')[0];
+        this.withAI = againstAI || false;
+        this.gameController.resetGame(this.withAI);
         this.paintBoard();
         $('.game-splash').hide();
     }
 
-    startGame() {
+
+    createGame() {
         this.gameController.init();
-        this.paintBoard();
     }
 
     isValidMove(start, end) {
@@ -102,7 +104,9 @@ export default class GameUI {
                 child.setAttribute('data-coords', i + '-' + j);
                 if (templateRef[i][j] === DARK_ROM) {
                     image.setAttribute('src', DARK_ROM_IMAGE);
-                    child.classList.add('board__cell--disabled')
+                    if (this.withAI) {
+                        child.classList.add('board__cell--disabled')
+                    }
                     child.appendChild(image);
                 } else if (templateRef[i][j] === LIGHT_ROM) {
                     image.setAttribute('src', LIGHT_ROM_IMAGE);

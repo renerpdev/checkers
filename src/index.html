@@ -11,8 +11,19 @@
 <div class="game-wrapper">
     <div class="game-splash">
         <div class="game-splash__box">
-            <h1 class="game-splash__text" id="game-info-text">Do you wanna play?</h1>
-            <a href="javascript:game.resetGame()" class="game-splash__button">start game</a>
+            <h1 class="game-splash__text" id="game-info-text">Do you wanna play</h1>
+            <h1>Checkers ?</h1>
+            <a href="javascript:game.restartGame()" class="game-splash__button">start game</a>
+            <div class="game-splash__radio-box">
+                <span class="game-splash__radio-line">
+                    <label for="ai">Against AI</label>
+                    <input type="radio" id="ai" name="game-type" >
+                </span>
+                <span class="game-splash__radio-line">
+                    <label for="two-players">Two players</label>
+                    <input type="radio" id="two-players" name="game-type" checked="checked">
+                </span>
+            </div>
         </div>
     </div>
     <h2 class="primary-heading">Checkers Game</h2>

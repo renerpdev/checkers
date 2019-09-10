@@ -36,4 +36,23 @@
       background-color: lighten($dark-cell-color, 10);
     }
   }
+
+
+  &__radio-box{
+    padding: .5rem;
+  }
+  &__radio-line{
+    margin: 0 .5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    label{
+      order: 1;
+      margin-left: 1rem;
+    }
+    label,input{
+      cursor: pointer;
+    }
+  }
 }

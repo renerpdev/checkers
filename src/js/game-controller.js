@@ -12,13 +12,13 @@ export default class GameController {
         this.gameTemplate = [];
     }
 
-    resetGame() {
+    resetGame(withAI) {
+        this.withAI = withAI;
         this.gameTemplate = this.getInitialTemplate();
     }
 
     init() {
         this.createBoard();
-        this.resetGame();
     }
 
     createBoard() {

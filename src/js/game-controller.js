@@ -66,7 +66,7 @@ export default class GameController {
             p.romsAmount = 12;
             return p;
         });
-        this._gameTemplate = this.templates.testing;
+        this._gameTemplate = this.templates.initial;
     }
 
     isGameEnd() {
@@ -135,9 +135,9 @@ export default class GameController {
             for (let j = 0; j < 8; j++) {
                 if (counter == j) {
                     counter += 2;
-                    row.push(DARK_CELL);
-                } else {
                     row.push(LIGHT_CELL);
+                } else {
+                    row.push(DARK_CELL);
                 }
             }
             this._gameBoard.push(row)
@@ -181,7 +181,7 @@ export default class GameController {
             const board = this.gameBoard;
             const templateRow = template[x2];
             const boardRow = board[x2];
-            return templateRow !== undefined && templateRow[y2] === BLANK_CELL && boardRow[y2] === LIGHT_CELL
+            return templateRow !== undefined && templateRow[y2] === BLANK_CELL && boardRow[y2] === DARK_CELL
         }
     }
 

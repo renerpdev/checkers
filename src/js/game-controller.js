@@ -79,48 +79,46 @@ export default class GameController {
         return false;
     }
 
-    handleActions(start, end, draggedCell, draggedRom) {
-        let [x, y] = start.split('-');
-        x = +x;
-        y = +y;
-        let [x2, y2] = end.split('-');
-        x2 = +x2;
-        y2 = +y2;
+    handleActions(start, end) {
+        let [x, y] = start;
+        let [x2, y2] = end;
         const template = this.gameTemplate;
-        const oldValue = template[x][y];
+        const draggedRom = template[x][y];
         if (draggedRom === LIGHT_ROM) {
             if (x2 + 2 == x && y2 + 2 === y) {// if its a KILL
                 this.updateCell(x2 + 1, y2 + 1, BLANK_CELL);
-                this.updateCell(x2, y2, oldValue);
+                this.updateCell(x2, y2, draggedRom);
                 this.players[1].beKilled();
             } else if (x2 + 2 == x && y2 - 2 === y) {// if its a KILL
                 this.updateCell(x2 + 1, y2 - 1, BLANK_CELL);
-                this.updateCell(x2, y2, oldValue);
+                this.updateCell(x2, y2, draggedRom);
                 this.players[1].beKilled();
             } else if (x2 === 0) {// if reach the goal
                 this.updateCell(x2, y2, LIGHT_QUEEN);
             } else {
-                this.updateCell(x2, y2, oldValue);
+                this.updateCell(x2, y2, draggedRom);
             }
             this.updateCell(x, y, BLANK_CELL);
 
         } else if (draggedRom === DARK_ROM) {
             if (x2 - 2 == x && y2 + 2 === y) {// if its a KILL
                 this.updateCell(x2 - 1, y2 + 1, BLANK_CELL);
-                this.updateCell(x2, y2, oldValue);
+                this.updateCell(x2, y2, draggedRom);
                 this.players[0].beKilled();
             } else if (x2 - 2 == x && y2 - 2 === y) {// if its a KILL
                 this.updateCell(x2 - 1, y2 - 1, BLANK_CELL);
-                this.updateCell(x2, y2, oldValue);
+                this.updateCell(x2, y2, draggedRom);
                 this.players[0].beKilled();
-            } else if (x2 === 0) {// if reach the goal
-                this.updateCell(x2, y2, LIGHT_QUEEN);
+            } else if (x2 === 7) {// if reach the goal
+                this.updateCell(x2, y2, DARK_QUEEN);
             } else {
-                this.updateCell(x2, y2, oldValue);
+                this.updateCell(x2, y2, draggedRom);
             }
             this.updateCell(x, y, BLANK_CELL);
 
         } else if (draggedRom === DARK_QUEEN || draggedRom === LIGHT_QUEEN) {
+            this.updateCell(x2, y2, draggedRom);
+            this.updateCell(x, y, BLANK_CELL);
         }
         // console.table(this.gameController.gameTemplate);
     }
@@ -166,8 +164,8 @@ export default class GameController {
 
     isValidCell(start, end) {
         if (start !== undefined && end !== undefined) {
-            const [x, y] = start.split('-');
-            const [x2, y2] = end.split('-');
+            const [x, y] = start;
+            const [x2, y2] = end;
             const template = this.gameTemplate;
             const board = this.gameBoard;
             const templateRow = template[x2];
@@ -176,21 +174,20 @@ export default class GameController {
         }
     }
 
-    isValidMove(start, end, draggedCell, draggedRom) {
-        const [i0, j0] = start.split('-');
-        const [i1, j1] = end.split('-');
-        const validMoves = this.getValidMoves(i0, j0, draggedCell, draggedRom);
+    isValidMove(start, end) {
+        const [i0, j0] = start;
+        const [i1, j1] = end;
+        const validMoves = this.getValidMoves(i0, j0);
         const moves = validMoves.filter(m => m[0] == i1 && m[1] == j1);
         return moves.length > 0;
     }
 
-    getValidMoves(i, j, draggedCell, draggedRom) {
-        i = +i;
-        j = +j;
+    getValidMoves(i, j) {
+        const draggedRom = this.gameTemplate[i][j];
         const template = this.gameTemplate;
         const moves = [];
         const validateStepTopRight = (i, j, template, steps) => {
-            if (i >= 0 && j >= 0 && template[i][j] === BLANK_CELL) {// if the move is within the board
+            if (i >= 0 && j <= 7 && template[i][j] === BLANK_CELL) {// if the move is within the board
                 if (steps > 1) {
                     const ni = i + 1, nj = j - 1;
                     return template[ni][nj] !== draggedRom &&
@@ -212,7 +209,7 @@ export default class GameController {
             return false;
         };
         const validateStepBottomRight = (i, j, template, steps) => {
-            if (i >= 0 && j >= 0 && template[i][j] === BLANK_CELL) {// if the move is within the board
+            if (i <= 7 && j <= 7 && template[i][j] === BLANK_CELL) {// if the move is within the board
                 if (steps > 1) {
                     const ni = i - 1, nj = j - 1;
                     return template[ni][nj] !== draggedRom &&
@@ -223,7 +220,7 @@ export default class GameController {
             return false;
         };
         const validateStepBottomLeft = (i, j, template, steps) => {
-            if (i <= 7 && j <= 7 && template[i][j] === BLANK_CELL) {// if the move is within the board
+            if (i <= 7 && j >= 0 && template[i][j] === BLANK_CELL) {// if the move is within the board
                 if (steps > 1) {
                     const ni = i - 1, nj = j + 1;
                     return template[ni][nj] !== draggedRom &&

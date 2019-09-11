@@ -15,7 +15,6 @@ export default class GameUI {
     constructor(boardSelector) {
         this.boardUI = $(boardSelector);
         this.gameController = new GameController();
-        this.draggedCell = null;
         this.draggedRom = null;
         //******************************//
         // $('.game-splash').hide();// remove later!!!!!!
@@ -48,47 +47,57 @@ export default class GameUI {
                 $('.dnd-droppable').droppable({
                     onDrop: (event) => {
                         const node = event.target;
-                        const start = $this.draggedCell;
-                        const end = $(node).data('coords');
-                        if ($this.gameController.isValidCell(start, end, $this.draggedCell, $this.draggedRom) &&
-                            $this.gameController.isValidMove(start, end, $this.draggedCell, $this.draggedRom)) {
-                            $this.gameController.handleActions(start, end, $this.draggedCell, $this.draggedRom);
-                            $this.draggedCell = null;
-                            $this.draggedRom = null;
-                            let winner = $this.gameController.isGameEnd();
-                            if (winner !== false) {
-                                if (typeof winner === 'number') {
-                                    winner = $this.gameController.players[winner].playerType !== PC;
+                        const data = $(node).data('coords');
+                        if (data) {
+                            const [i0, j0] = $this.draggedRom.split('-');
+                            const [i1, j1] = data.split('-');
+                            const start = [+i0, +j0];
+                            const end = [+i1, +j1];
+                            if ($this.canMove(start, end)) {
+                                $this.gameController.handleActions(start, end);
+                                $this.draggedCell = null;
+                                $this.draggedRom = null;
+                                let winner = $this.gameController.isGameEnd();
+                                if (winner !== false) {
+                                    if (typeof winner === 'number') {
+                                        winner = $this.gameController.players[winner].playerType !== PC;
+                                    }
+                                    $this.splashText(winner);
+                                } else {
+                                    $this.gameController.changeTurn();
+                                    $this.paintBoard();
                                 }
-                                $this.splashText(winner);
-                            } else {
-                                $this.gameController.changeTurn();
-                                // console.log($this.gameController.players);
-                                $this.paintBoard();
                             }
                         }
                     },
                     onDragEnter: (event, callback) => {
                         const node = event.target;
-                        const start = $this.draggedCell;
-                        const end = $(node).data('coords');
-                        if ($this.gameController.isValidCell(start, end, $this.draggedCell, $this.draggedRom) &&
-                            $this.gameController.isValidMove(start, end, $this.draggedCell, $this.draggedRom)) {
-                            callback()
+                        const data = $(node).data('coords');
+                        if (data) {
+                            const [i0, j0] = $this.draggedRom.split('-');
+                            const [i1, j1] = data.split('-');
+                            const start = [+i0, +j0];
+                            const end = [+i1, +j1];
+                            if ($this.canMove(start, end)) {
+                                callback()
+                            }
                         }
                     }
                 });
                 $('.dnd-draggable').draggable({
                     onDragStart: (ev, callback) => {
                         const parentNode = ev.target.parentNode;
-                        $this.draggedCell = $(parentNode).data('coords');
-                        const [i, j] = $this.draggedCell.split('-');
-                        $this.draggedRom = $this.gameController.gameTemplate[i][j];
+                        $this.draggedRom = $(parentNode).data('coords');
                         callback();
                     }
                 });
             });
         })(this)
+    }
+
+    canMove(start, end) {
+        return this.gameController.isValidCell(start, end) &&
+            this.gameController.isValidMove(start, end)
     }
 
     splashText(win) {
@@ -113,7 +122,7 @@ export default class GameUI {
                 if (templateRef[i][j] === DARK_ROM) {
                     image.setAttribute('src', DARK_ROM_IMAGE);
                     if (this.gameController.players[currentPlayerIndex].playerType === PC || currentPlayerIndex === 0) {
-                        // child.classList.add('board__cell--disabled')
+                        child.classList.add('board__cell--disabled')
                     }
                     child.appendChild(image);
                 } else if (templateRef[i][j] === LIGHT_ROM) {
@@ -125,7 +134,7 @@ export default class GameUI {
                 } else if (templateRef[i][j] === DARK_QUEEN) {
                     image.setAttribute('src', DARK_QUEEN_IMAGE);
                     if (this.gameController.players[currentPlayerIndex].type === PC || currentPlayerIndex === 0) {
-                        // child.classList.add('board__cell--disabled')
+                        child.classList.add('board__cell--disabled')
                     }
                     child.appendChild(image);
                 } else if (templateRef[i][j] === LIGHT_QUEEN) {

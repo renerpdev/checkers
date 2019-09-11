@@ -1,28 +1,27 @@
 export default class Player {
-    constructor(name, type,rom) {
+    constructor(name, playerType) {
         this._romsAmount = 12;
         this._name = name;
-        this._type = type;
-        this._rom = rom
+        this._playerType = playerType;
     }
 
     beKilled() {
-        this._roms--;
-    }
-
-    get rom() {
-        return this._rom;
+        this._romsAmount--;
     }
 
     get name() {
         return this._name;
     }
 
-    get type() {
-        return this._type;
+    get playerType() {
+        return this._playerType;
     }
 
     get romsAmount() {
         return this._romsAmount;
+    }
+
+    set romsAmount(value) {
+        this._romsAmount = value;
     }
 }

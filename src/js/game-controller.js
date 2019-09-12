@@ -108,7 +108,8 @@ export default class GameController {
                 this.updateCell(x2 - 1, y2 - 1, BLANK_CELL);
                 this.updateCell(x2, y2, draggedRom);
                 this.players[0].beKilled();
-            } else if (x2 === 7) {// if reach the goal
+            }
+            if (x2 === 7) {// if reach the goal
                 this.updateCell(x2, y2, DARK_QUEEN);
             } else {
                 this.updateCell(x2, y2, draggedRom);
@@ -171,8 +172,8 @@ export default class GameController {
                 [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL],
                 [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
                 [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL],
+                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL],
                 [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
             ]
         }
@@ -347,7 +348,23 @@ export default class GameController {
         }
 
         return moves;
+    }
 
+    getAllPossibleMoves() {
+        const romType = this.currentPlayerIndex === 1 ? 'L' : 'D';
+        const moves = [];
+
+        this.gameTemplate.forEach((row, i) => {
+            row.forEach((rom, j) => {
+                if (rom.indexOf(romType)) {
+                    const validMoves = this.getValidMoves(i, j);
+                    if (validMoves.length > 0) {
+                        moves.push([i, j]);
+                    }
+                }
+            })
+        });
+        return moves;
     }
 
 }

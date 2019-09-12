@@ -1,6 +1,8 @@
 // GAME BOARD
+export const DARK = 'D';
 export const DARK_ROM = 'DR';
 export const DARK_QUEEN = 'DQ';
+export const LIGHT = 'L';
 export const LIGHT_ROM = 'LR';
 export const LIGHT_QUEEN = 'LQ';
 export const LIGHT_CELL = 'LC';
@@ -10,24 +12,72 @@ export const BLANK_CELL = '  ';
 // GAME STATES
 export const LOSS = -1;
 export const WIN = 1;
-export const DEUCE = 0;
+export const DRAW = 0;
+export const PLAYING = 2;
+export const CHANGE_TURN = 3;
 
 // GAME PLAYERS
 export const HUMAN = 'HUMAN';
 export const PC = 'PC';
 
-// GAME ACTIONS
-export const KILL = 'KILL';
-export const ONE_STEP = 'ONE_STEP';
-export const GET_QUEEN = 'QUEEN';
 
 //------------------------------------------------------
+/**
+ *      GAME LIFE CYCLE:
+ *
+ *  - Validate if the player has moves
+ *  - Verify if the game is over (LOSS - WIN - TIE)
+ *  - Change the turn
+ */
+//------------------------------------------------------
+
+
+//------------------------------------------------------
+//               TEMPLATES
+
+
+const TEMPLATES = {
+    initial: [
+        [DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL],
+        [BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM],
+        [DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
+        [LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL],
+        [BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
+    ],
+    testing: [
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [DARK_QUEEN, BLANK_CELL, DARK_QUEEN, BLANK_CELL, DARK_QUEEN, BLANK_CELL, DARK_QUEEN, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, LIGHT_QUEEN],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+    ],
+    one: [
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+    ]
+};
+
+//------------------------------------------------------
+
 
 export default class GameController {
 
     constructor(players) {
         this._gameBoard = [];
-        this._gameTemplate = this.getTemplates();
+        this._gameTemplate = TEMPLATES.initial;
+        this._validCells = [];
         this._players = players;
         this._currentPlayerIndex = 0;
         this.createBoard();
@@ -53,12 +103,20 @@ export default class GameController {
         return this._players;
     }
 
+    get validCells() {
+        return this._validCells;
+    }
+
     getCurrentPlayer() {
         return this.players[this._currentPlayerIndex];
     }
 
     changeTurn() {
         this.currentPlayerIndex = this.currentPlayerIndex === 0 ? 1 : 0;
+        // const moveLeft = this.getAllPossibleMoves();
+        // if (moveLeft.length === 0) {
+        //     return this.currentPlayerIndex;
+        // }
     }
 
     restartGame() {
@@ -66,17 +124,27 @@ export default class GameController {
             p.romsAmount = 12;
             return p;
         });
-        this._gameTemplate = this.templates.initial;
+        this._gameTemplate = JSON.parse(JSON.stringify(TEMPLATES.initial));
+        this.getAllPossibleMoves();
     }
 
     isGameEnd() {
-        if (this.players[0].romsAmount == 0) {
-            return 1;
+        // Verify if the player can moves any rom
+        const possibleMoves = this.getAllPossibleMoves();
+        if (possibleMoves.length === 0) {
+            return LOSS;
         }
-        if (this.players[1].romsAmount == 0) {
-            return 0;
+        // Verify if the player has roms
+        const romsLeft = this.getRomsLeft();
+        if (romsLeft === 0) {
+            return LOSS;
         }
-        return false;
+        return CHANGE_TURN;
+        // return PLAYING;
+    }
+
+    getRomsLeft() {
+        return this.getCurrentPlayer().romsAmount;
     }
 
     handleActions(start, end) {
@@ -120,12 +188,12 @@ export default class GameController {
             this.updateCell(x2, y2, draggedRom);
             this.updateCell(x, y, BLANK_CELL);
         }
-        // console.table(this.gameController.gameTemplate);
     }
 
     createBoard() {
         let counter, row;
         for (let i = 0; i < 8; i++) {
+            this.validCells.push([]);
             if (i % 2 == 0) {
                 counter = 1;
             } else {
@@ -133,49 +201,16 @@ export default class GameController {
             }
             row = [];
             for (let j = 0; j < 8; j++) {
+                this.validCells[i].push(false);
                 if (counter == j) {
                     counter += 2;
                     row.push(LIGHT_CELL);
                 } else {
                     row.push(DARK_CELL);
                 }
-            }
-            this._gameBoard.push(row)
-        }
-    }
 
-    getTemplates() {
-        this.templates = {
-            initial: [
-                [DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL],
-                [BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM],
-                [DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
-                [LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL],
-                [BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
-            ],
-            testing: [
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [DARK_QUEEN, BLANK_CELL, DARK_QUEEN, BLANK_CELL, DARK_QUEEN, BLANK_CELL, DARK_QUEEN, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, LIGHT_QUEEN],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-            ],
-            one: [
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-            ]
+            }
+            this._gameBoard.push(row);
         }
     }
 
@@ -351,16 +386,20 @@ export default class GameController {
     }
 
     getAllPossibleMoves() {
-        const romType = this.currentPlayerIndex === 1 ? 'L' : 'D';
+        const romColor = this.getCurrentPlayer().romColor;
         const moves = [];
-
         this.gameTemplate.forEach((row, i) => {
             row.forEach((rom, j) => {
-                if (rom.indexOf(romType)) {
+                if (rom.indexOf(romColor) >= 0) {
                     const validMoves = this.getValidMoves(i, j);
                     if (validMoves.length > 0) {
+                        this._validCells[i][j] = true;
                         moves.push([i, j]);
+                    } else {
+                        this._validCells[i][j] = false;
                     }
+                } else {
+                    this._validCells[i][j] = false;
                 }
             })
         });

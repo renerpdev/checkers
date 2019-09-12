@@ -1,6 +1,14 @@
 import GameController, {
-    LIGHT_ROM, DARK_ROM, BLANK_CELL,
-    LIGHT_CELL, LIGHT_QUEEN, DARK_QUEEN, DARK_CELL, HUMAN, PC, KILL, GET_QUEEN, ONE_STEP
+    LIGHT_ROM,
+    DARK_ROM,
+    LIGHT_CELL,
+    LIGHT_QUEEN,
+    DARK_QUEEN,
+    HUMAN,
+    PC,
+    PLAYING,
+    DRAW,
+    WIN, LOSS, DARK, LIGHT, CHANGE_TURN
 } from './game-controller'
 import * as $ from 'jquery'
 import Player from "./player";
@@ -16,17 +24,14 @@ export default class GameUI {
         this.boardUI = $(boardSelector);
         this.gameController = new GameController();
         this.draggedRom = null;
-        //******************************//
-        // $('.game-splash').hide();// remove later!!!!!!
-        //******************************//
     }
 
     restartGame() {
         let againstAI = $('#ai')[0];
         againstAI = againstAI !== undefined ? againstAI.checked : false;
         const players = [];
-        players.push(new Player('human', HUMAN, LIGHT_ROM));
-        players.push(new Player(againstAI ? 'dexter' : 'human2', againstAI ? PC : HUMAN, DARK_ROM));
+        players.push(new Player('human', HUMAN, LIGHT));
+        players.push(new Player(againstAI ? 'dexter' : 'human2', againstAI ? PC : HUMAN, DARK));
         this.createGame(players);
         this.gameController.restartGame();
         this.paintBoard();
@@ -38,7 +43,7 @@ export default class GameUI {
     }
 
     endGame() {
-        this.splashText(false);
+        this.splashText('Sorry you loose!', 'play again');
     }
 
     addDnD() {
@@ -55,18 +60,8 @@ export default class GameUI {
                             const end = [+i1, +j1];
                             if ($this.canMove(start, end)) {
                                 $this.gameController.handleActions(start, end);
-                                $this.draggedCell = null;
-                                $this.draggedRom = null;
-                                let winner = $this.gameController.isGameEnd();
-                                if (winner !== false) {
-                                    if (typeof winner === 'number') {
-                                        winner = $this.gameController.players[winner].playerType !== PC;
-                                    }
-                                    $this.splashText(winner);
-                                } else {
-                                    $this.gameController.changeTurn();
-                                    $this.paintBoard();
-                                }
+                                let gameState = $this.gameController.isGameEnd();
+                                $this.handleGameState(gameState);
                             }
                         }
                     },
@@ -95,14 +90,42 @@ export default class GameUI {
         })(this)
     }
 
+    handleGameState(state) {
+        if (state === CHANGE_TURN) {  // If continue playing
+            this.draggedRom = null;
+            this.gameController.changeTurn();
+            this.gameController.getAllPossibleMoves();
+            this.paintBoard();
+        } if (state === PLAYING) {  // If continue playing
+            this.paintBoard();
+        }
+        else if (state === DRAW) { // if its a DRAW
+            this.splashText('Oh, its a Draw!','play again')
+        } else if (state === WIN) { // if its a WIN
+            this.splashText('Congrats you win!', 'one more')
+        }else if (state === LOSS) { // if its a LOSS
+           this.endGame();
+        }
+        //
+        // if (winner !== false) {
+        //     if (typeof winner === 'number') {
+        //         winner = $this.gameController.players[winner].playerType !== PC;
+        //     }
+        //     $this.splashText(winner);
+        // } else {
+        //     $this.gameController.changeTurn();
+        // }
+
+    }
+
     canMove(start, end) {
         return this.gameController.isValidCell(end) &&
             this.gameController.isValidMove(start, end)
     }
 
-    splashText(win) {
-        $('.game-splash__text')[0].innerText = win === true ? 'Congrats you win!' : 'You loose!';
-        $('.game-splash__button')[0].innerText = win === true ? 'One more' : 'play again';
+    splashText(title, button) {
+        $('.game-splash__text')[0].innerText = title;
+        $('.game-splash__button')[0].innerText = button;
         $('.game-splash').show();
     }
 
@@ -118,31 +141,21 @@ export default class GameUI {
                 child.classList.add('board__cell');
                 child.classList.add('dnd-droppable');
                 child.setAttribute('data-coords', i + '-' + j);
-                const currentPlayerIndex = this.gameController.currentPlayerIndex;
                 if (templateRef[i][j] === DARK_ROM) {
                     image.setAttribute('src', DARK_ROM_IMAGE);
-                    if (this.gameController.players[currentPlayerIndex].playerType === PC || currentPlayerIndex === 0) {
-                        child.classList.add('board__cell--disabled')
-                    }
                     child.appendChild(image);
                 } else if (templateRef[i][j] === LIGHT_ROM) {
                     image.setAttribute('src', LIGHT_ROM_IMAGE);
-                    if (currentPlayerIndex === 1) {
-                        child.classList.add('board__cell--disabled')
-                    }
                     child.appendChild(image);
                 } else if (templateRef[i][j] === DARK_QUEEN) {
                     image.setAttribute('src', DARK_QUEEN_IMAGE);
-                    if (this.gameController.players[currentPlayerIndex].type === PC || currentPlayerIndex === 0) {
-                        child.classList.add('board__cell--disabled')
-                    }
                     child.appendChild(image);
                 } else if (templateRef[i][j] === LIGHT_QUEEN) {
                     image.setAttribute('src', LIGHT_QUEEN_IMAGE);
-                    if (currentPlayerIndex === 1) {
-                        child.classList.add('board__cell--disabled')
-                    }
                     child.appendChild(image);
+                }
+                if (!this.gameController.validCells[i][j]) {
+                    child.classList.add('board__cell--disabled')
                 }
                 if (cell === LIGHT_CELL) {
                     child.classList.add('board__cell--light')

@@ -87,13 +87,12 @@ export default class GameController {
         if (draggedRom === LIGHT_ROM) {
             if (x2 + 2 == x && y2 + 2 === y) {// if its a KILL
                 this.updateCell(x2 + 1, y2 + 1, BLANK_CELL);
-                this.updateCell(x2, y2, draggedRom);
                 this.players[1].beKilled();
             } else if (x2 + 2 == x && y2 - 2 === y) {// if its a KILL
                 this.updateCell(x2 + 1, y2 - 1, BLANK_CELL);
-                this.updateCell(x2, y2, draggedRom);
                 this.players[1].beKilled();
-            } else if (x2 === 0) {// if reach the goal
+            }
+            if (x2 === 0) {// if reach the goal
                 this.updateCell(x2, y2, LIGHT_QUEEN);
             } else {
                 this.updateCell(x2, y2, draggedRom);
@@ -156,13 +155,23 @@ export default class GameController {
                 [LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL],
                 [BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
             ],
-            testing : [
+            testing: [
                 [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
                 [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
                 [DARK_QUEEN, BLANK_CELL, DARK_QUEEN, BLANK_CELL, DARK_QUEEN, BLANK_CELL, DARK_QUEEN, BLANK_CELL],
                 [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
                 [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
                 [BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, LIGHT_QUEEN],
+                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+            ],
+            one: [
+                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+                [BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+                [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
                 [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
                 [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
             ]
@@ -173,10 +182,9 @@ export default class GameController {
         this._gameTemplate[x][y] = value;
     }
 
-    isValidCell(start, end) {
-        if (start !== undefined && end !== undefined) {
-            const [x, y] = start;
-            const [x2, y2] = end;
+    isValidCell(cell) {
+        if (cell !== undefined) {
+            const [x2, y2] = cell;
             const template = this.gameTemplate;
             const board = this.gameBoard;
             const templateRow = template[x2];

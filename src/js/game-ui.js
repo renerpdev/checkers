@@ -96,7 +96,7 @@ export default class GameUI {
     }
 
     canMove(start, end) {
-        return this.gameController.isValidCell(start, end) &&
+        return this.gameController.isValidCell(end) &&
             this.gameController.isValidMove(start, end)
     }
 

@@ -13,7 +13,7 @@ export const BLANK_CELL = '  ';
 export const LOSS = -1;
 export const WIN = 1;
 export const DRAW = 0;
-export const PLAYING = 2;
+export const KEEP_PLAYING = 2;
 export const CHANGE_TURN = 3;
 
 // GAME PLAYERS
@@ -47,6 +47,16 @@ const TEMPLATES = {
         [LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL],
         [BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
     ],
+    oneMove: [
+        [DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL],
+        [BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM],
+        [DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL],
+        [BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
+        [LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
+        [LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+    ],
     testing: [
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
@@ -57,17 +67,28 @@ const TEMPLATES = {
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
     ],
-    one: [
+    oneKill: [
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
     ]
 };
+
+const DISABLED_CELLS = [
+    [false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false, false],
+]
 
 //------------------------------------------------------
 
@@ -76,7 +97,7 @@ export default class GameController {
 
     constructor(players) {
         this._gameBoard = [];
-        this._gameTemplate = TEMPLATES.initial;
+        this._gameTemplate = [];
         this._validCells = [];
         this._players = players;
         this._currentPlayerIndex = 0;
@@ -107,16 +128,16 @@ export default class GameController {
         return this._validCells;
     }
 
+    set validCells(value) {
+        this._validCells = JSON.parse(JSON.stringify(value));
+    }
+
     getCurrentPlayer() {
         return this.players[this._currentPlayerIndex];
     }
 
     changeTurn() {
         this.currentPlayerIndex = this.currentPlayerIndex === 0 ? 1 : 0;
-        // const moveLeft = this.getAllPossibleMoves();
-        // if (moveLeft.length === 0) {
-        //     return this.currentPlayerIndex;
-        // }
     }
 
     restartGame() {
@@ -131,37 +152,43 @@ export default class GameController {
     isGameEnd() {
         // Verify if the player can moves any rom
         const possibleMoves = this.getAllPossibleMoves();
-        if (possibleMoves.length === 0) {
-            return LOSS;
-        }
         // Verify if the player has roms
         const romsLeft = this.getRomsLeft();
-        if (romsLeft === 0) {
+        const isPCPlayer = this.getCurrentPlayer().playerType === PC;
+        if (possibleMoves.length === 0 || romsLeft === 0) {
+            const areBothHumans = this.players[0].playerType === this.players[1].playerType;
+            if (isPCPlayer || areBothHumans) {
+                return WIN;
+            }
             return LOSS;
         }
+        // return DRAW;
         return CHANGE_TURN;
-        // return PLAYING;
     }
 
     getRomsLeft() {
         return this.getCurrentPlayer().romsAmount;
     }
 
-    handleActions(start, end) {
+    handleTurn(start, end) {
         let [x, y] = start;
         let [x2, y2] = end;
+        let state = CHANGE_TURN;
         const template = this.gameTemplate;
         const draggedRom = template[x][y];
         if (draggedRom === LIGHT_ROM) {
             if (x2 + 2 == x && y2 + 2 === y) {// if its a KILL
                 this.updateCell(x2 + 1, y2 + 1, BLANK_CELL);
                 this.players[1].beKilled();
+                state = KEEP_PLAYING;
             } else if (x2 + 2 == x && y2 - 2 === y) {// if its a KILL
                 this.updateCell(x2 + 1, y2 - 1, BLANK_CELL);
                 this.players[1].beKilled();
+                state = KEEP_PLAYING;
             }
             if (x2 === 0) {// if reach the goal
                 this.updateCell(x2, y2, LIGHT_QUEEN);
+                state = CHANGE_TURN;
             } else {
                 this.updateCell(x2, y2, draggedRom);
             }
@@ -172,13 +199,16 @@ export default class GameController {
                 this.updateCell(x2 - 1, y2 + 1, BLANK_CELL);
                 this.updateCell(x2, y2, draggedRom);
                 this.players[0].beKilled();
+                state = KEEP_PLAYING;
             } else if (x2 - 2 == x && y2 - 2 === y) {// if its a KILL
                 this.updateCell(x2 - 1, y2 - 1, BLANK_CELL);
                 this.updateCell(x2, y2, draggedRom);
                 this.players[0].beKilled();
+                state = KEEP_PLAYING;
             }
             if (x2 === 7) {// if reach the goal
                 this.updateCell(x2, y2, DARK_QUEEN);
+                state = CHANGE_TURN;
             } else {
                 this.updateCell(x2, y2, draggedRom);
             }
@@ -188,6 +218,34 @@ export default class GameController {
             this.updateCell(x2, y2, draggedRom);
             this.updateCell(x, y, BLANK_CELL);
         }
+        const moves = this.getValidMoves(x2, y2).filter(cell => {
+            const [i, j] = cell;
+            // if its a LIGHT rom
+            if (draggedRom.indexOf(LIGHT) >= 0) {
+                if ((i + 2 === x2 && j + 2 === y2)||(i + 2 === x2 && j - 2 === y2)) {
+                    return cell;
+                }
+            }
+            // if its DARK rom
+            else if (draggedRom.indexOf(DARK) >= 0) {
+                if ((i - 2 === x2 && j - 2 === y2)||(i + 2 === x2 && j - 2 === y2)) {
+                    return cell;
+                }
+            }
+        });
+        // if can continue playing but has no moves
+        if (state === KEEP_PLAYING) {
+            if (moves.length > 0) {
+                // disable all cells
+                this.validCells = DISABLED_CELLS;
+                // enable only the specific ones
+                this.validCells[x2][y2]=true;
+                console.log(moves, this.validCells);
+                return KEEP_PLAYING;
+            }
+            return CHANGE_TURN;
+        }
+        return state;
     }
 
     createBoard() {

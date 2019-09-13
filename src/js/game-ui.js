@@ -6,7 +6,7 @@ import GameController, {
     DARK_QUEEN,
     HUMAN,
     PC,
-    PLAYING,
+    KEEP_PLAYING,
     DRAW,
     WIN, LOSS, DARK, LIGHT, CHANGE_TURN
 } from './game-controller'
@@ -59,9 +59,17 @@ export default class GameUI {
                             const start = [+i0, +j0];
                             const end = [+i1, +j1];
                             if ($this.canMove(start, end)) {
-                                $this.gameController.handleActions(start, end);
-                                let gameState = $this.gameController.isGameEnd();
-                                $this.handleGameState(gameState);
+                                const state = $this.gameController.handleTurn(start, end);
+                                if (state === CHANGE_TURN) {
+                                    console.log('CHANGE_TURN')
+                                    $this.gameController.changeTurn();
+                                    let gameState = $this.gameController.isGameEnd();
+                                    $this.handleGameState(gameState);
+                                } else if (KEEP_PLAYING) {
+                                    console.log('KEEP_PLAYING')
+                                    $this.paintBoard();
+                                }
+
                             }
                         }
                     },
@@ -91,20 +99,15 @@ export default class GameUI {
     }
 
     handleGameState(state) {
-        if (state === CHANGE_TURN) {  // If continue playing
-            this.draggedRom = null;
-            this.gameController.changeTurn();
-            this.gameController.getAllPossibleMoves();
-            this.paintBoard();
-        } if (state === PLAYING) {  // If continue playing
-            this.paintBoard();
-        }
-        else if (state === DRAW) { // if its a DRAW
-            this.splashText('Oh, its a Draw!','play again')
+        this.draggedRom = null;
+        this.gameController.getAllPossibleMoves();
+        this.paintBoard();
+        if (state === DRAW) { // if its a DRAW
+            this.splashText('Oh, its a Draw!', 'play again')
         } else if (state === WIN) { // if its a WIN
             this.splashText('Congrats you win!', 'one more')
-        }else if (state === LOSS) { // if its a LOSS
-           this.endGame();
+        } else if (state === LOSS) { // if its a LOSS
+            this.endGame();
         }
         //
         // if (winner !== false) {

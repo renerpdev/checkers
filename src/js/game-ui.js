@@ -30,7 +30,7 @@ export default class GameUI {
         let againstAI = $('#ai')[0];
         againstAI = againstAI !== undefined ? againstAI.checked : false;
         const players = [];
-        players.push(new Player('human', HUMAN, LIGHT));
+        players.push(new Player('human1', HUMAN, LIGHT));
         players.push(new Player(againstAI ? 'dexter' : 'human2', againstAI ? PC : HUMAN, DARK));
         this.createGame(players);
         this.gameController.restartGame();
@@ -105,7 +105,10 @@ export default class GameUI {
         if (state === DRAW) { // if its a DRAW
             this.splashText('Oh, its a Draw!', 'play again')
         } else if (state === WIN) { // if its a WIN
-            this.splashText('Congrats you win!', 'one more')
+            const bothAreHumans = this.gameController.players[0].playerType === HUMAN &&
+                this.gameController.players[1].playerType === HUMAN;
+            const winnerName = this.gameController.players[this.gameController.currentPlayerIndex === 0 ? 1 : 0].name;
+            this.splashText(`Congrats ${bothAreHumans ? winnerName + ' wins' : 'you win'}!`, 'one more')
         } else if (state === LOSS) { // if its a LOSS
             this.endGame();
         }

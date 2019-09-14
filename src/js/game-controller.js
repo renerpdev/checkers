@@ -68,10 +68,10 @@ const TEMPLATES = {
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
     ],
     oneKill: [
+        [BLANK_CELL, BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
@@ -145,7 +145,7 @@ export default class GameController {
             p.romsAmount = 12;
             return p;
         });
-        this._gameTemplate = JSON.parse(JSON.stringify(TEMPLATES.initial));
+        this._gameTemplate = JSON.parse(JSON.stringify(TEMPLATES.oneKill));
         this.getAllPossibleMoves();
     }
 
@@ -222,13 +222,13 @@ export default class GameController {
             const [i, j] = cell;
             // if its a LIGHT rom
             if (draggedRom.indexOf(LIGHT) >= 0) {
-                if ((i + 2 === x2 && j + 2 === y2)||(i + 2 === x2 && j - 2 === y2)) {
+                if ((i + 2 === x2 && j + 2 === y2) || (i + 2 === x2 && j - 2 === y2)) {
                     return cell;
                 }
             }
             // if its DARK rom
             else if (draggedRom.indexOf(DARK) >= 0) {
-                if ((i - 2 === x2 && j - 2 === y2)||(i + 2 === x2 && j - 2 === y2)) {
+                if ((i - 2 === x2 && j - 2 === y2) || (i + 2 === x2 && j - 2 === y2)) {
                     return cell;
                 }
             }
@@ -239,7 +239,7 @@ export default class GameController {
                 // disable all cells
                 this.validCells = DISABLED_CELLS;
                 // enable only the specific ones
-                this.validCells[x2][y2]=true;
+                this.validCells[x2][y2] = true;
                 console.log(moves, this.validCells);
                 return KEEP_PLAYING;
             }
@@ -290,157 +290,9 @@ export default class GameController {
     isValidMove(start, end) {
         const [i0, j0] = start;
         const [i1, j1] = end;
-        const validMoves = this.getValidMoves(i0, j0);
+        const validMoves = this.getValidMoves(+i0, +j0);
         const moves = validMoves.filter(m => m[0] == i1 && m[1] == j1);
         return moves.length > 0;
-    }
-
-    getValidMoves(i, j) {
-        const draggedRom = this.gameTemplate[i][j];
-        const template = this.gameTemplate;
-        const moves = [];
-        const validateStepTopRight = (i, j, template, steps) => {
-            if (i >= 0 && j <= 7 && template[i][j] === BLANK_CELL) {// if the move is within the board
-                if (steps > 1) {
-                    const ni = i + 1, nj = j - 1;
-                    return template[ni][nj] !== draggedRom &&
-                        template[ni][nj] !== BLANK_CELL// if the rom is the opposite and it is not an empty cell
-                }
-                return true;
-            }
-            return false;
-        };
-        const validateStepTopLeft = (i, j, template, steps) => {
-            if (i >= 0 && j >= 0 && template[i][j] === BLANK_CELL) {// if the move is within the board
-                if (steps > 1) {
-                    const ni = i + 1, nj = j + 1;
-                    return template[ni][nj] !== draggedRom &&
-                        template[ni][nj] !== BLANK_CELL// if the rom is the opposite and it is not an empty cell
-                }
-                return true;
-            }
-            return false;
-        };
-        const validateStepBottomRight = (i, j, template, steps) => {
-            if (i <= 7 && j <= 7 && template[i][j] === BLANK_CELL) {// if the move is within the board
-                if (steps > 1) {
-                    const ni = i - 1, nj = j - 1;
-                    return template[ni][nj] !== draggedRom &&
-                        template[ni][nj] !== BLANK_CELL// if the rom is the opposite and it is not an empty cell
-                }
-                return true;
-            }
-            return false;
-        };
-        const validateStepBottomLeft = (i, j, template, steps) => {
-            if (i <= 7 && j >= 0 && template[i][j] === BLANK_CELL) {// if the move is within the board
-                if (steps > 1) {
-                    const ni = i - 1, nj = j + 1;
-                    return template[ni][nj] !== draggedRom &&
-                        template[ni][nj] !== BLANK_CELL// if the rom is the opposite and it is not an empty cell
-                }
-                return true;
-            }
-            return false;
-        };
-
-        let newI, newJ;
-        if (draggedRom === LIGHT_ROM) {
-            // --> ONE STEP
-            //
-            // TOP RIGHT
-            newI = i - 1;
-            newJ = j + 1;
-            if (validateStepTopRight(newI, newJ, template, 1)) {
-                moves.push([newI, newJ])
-            }
-            // TOP LEFT
-            newI = i - 1;
-            newJ = j - 1;
-            if (validateStepTopLeft(newI, newJ, template, 1)) {
-                moves.push([newI, newJ])
-            }
-            // --> TWO STEPS
-            //
-            // TOP RIGHT
-            newI = i - 2;
-            newJ = j + 2;
-            if (validateStepTopRight(newI, newJ, template, 2)) {
-                moves.push([newI, newJ])
-            }
-            // TOP LEFT
-            newI = i - 2;
-            newJ = j - 2;
-            if (validateStepTopLeft(newI, newJ, template, 2)) {
-                moves.push([newI, newJ])
-            }
-        }
-        else if (draggedRom === DARK_ROM) {
-            // --> ONE STEP
-            //
-            // BOTTOM RIGHT
-            newI = i + 1;
-            newJ = j + 1;
-            if (validateStepBottomRight(newI, newJ, template, 1)) {
-                moves.push([newI, newJ])
-            }
-            // BOTTOM LEFT
-            newI = i + 1;
-            newJ = j - 1;
-            if (validateStepBottomLeft(newI, newJ, template, 1)) {
-                moves.push([newI, newJ])
-            }
-            // --> TWO STEPS
-            //
-            // BOTTOM RIGHT
-            newI = i + 2;
-            newJ = j + 2;
-            if (validateStepBottomRight(newI, newJ, template, 2)) {
-                moves.push([newI, newJ])
-            }
-            // BOTTOM LEFT
-            newI = i + 2;
-            newJ = j - 2;
-            if (validateStepBottomLeft(newI, newJ, template, 2)) {
-                moves.push([newI, newJ])
-            }
-        } else if (draggedRom === DARK_QUEEN ||
-            draggedRom === LIGHT_QUEEN) {// is its a queen
-            // TOP LEFT
-            let ii = i - 1;
-            let jj = j - 1;
-            while (ii >= 0 && jj >= 0) {
-                moves.push([ii, jj]);
-                ii--;
-                jj--;
-            }
-            // BOTTOM RIGHT
-            ii = i + 1;
-            jj = j + 1;
-            while (ii <= 7 && jj <= 7) {
-                moves.push([ii, jj]);
-                ii++;
-                jj++;
-            }
-            // TOP RIGHT
-            ii = i - 1;
-            jj = j + 1;
-            while (ii >= 0 && jj <= 7) {
-                moves.push([ii, jj]);
-                ii--;
-                jj++;
-            }
-            // BOTTOM LEFT
-            ii = i + 1;
-            jj = j - 1;
-            while (ii <= 7 && jj >= 0) {
-                moves.push([ii, jj]);
-                ii++;
-                jj--;
-            }
-        }
-
-        return moves;
     }
 
     getAllPossibleMoves() {
@@ -461,6 +313,225 @@ export default class GameController {
                 }
             })
         });
+        return moves;
+    }
+
+    getValidMoves(x, y) {
+        const moves = [];
+        const rom = this.gameTemplate[x][y];
+
+        const validateQueenMoves = (x, y, romColor) => {
+            let i, j, temp, moves = [];
+            // BOTTOM LEFT
+            i = x + 1;
+            j = y - 1;
+            while (i <= 7 && j >= 0) {// if is within the board
+                temp = this.gameTemplate[i][j];
+                if (temp === BLANK_CELL) {// if the cell to jump is empty
+                    moves.push([i, j]);
+                } else {// else if has a rom then
+                    if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? DARK : LIGHT) >= 0) {// if the rom has the same color
+                        break;
+                    } else if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if the rom has diff color
+                        const ni = i + 1;
+                        const nj = j - 1;
+                        if (ni <= 7 && nj >= 0) {// jump over and verify it is within the board
+                            temp = this.gameTemplate[ni][nj];
+                            if (temp === BLANK_CELL) {// if the cell to jump is an empty
+                                moves.push([ni, nj]);
+                                break;
+                            }
+                        }
+                    }
+                }
+                i += 1;
+                j -= 1;
+            }
+            // BOTTOM RIGHT
+            i = x + 1;
+            j = y + 1;
+            while (i <= 7 && j <= 7) {// if is within the board
+                temp = this.gameTemplate[i][j];
+                if (temp === BLANK_CELL) {// if the cell to jump is an empty
+                    moves.push([i, j]);
+                } else {// else if has a rom then
+                    if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? DARK : LIGHT) >= 0) {// if the rom has the same color
+                        break;
+                    } else if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if the rom has diff color
+                        const ni = i + 1;
+                        const nj = j + 1;
+                        if (ni <= 7 && nj <= 7) {// jump over and verify it is within the board
+                            temp = this.gameTemplate[ni][nj];
+                            if (temp === BLANK_CELL) {// if the cell to jump is an empty
+                                moves.push([ni, nj]);
+                                break;
+                            }
+                        }
+                    }
+                }
+                i += 1;
+                j += 1;
+            }
+            // TOP RIGHT
+            i = x - 1;
+            j = y + 1;
+            while (i >= 0 && j <= 7) {// if is within the board
+                temp = this.gameTemplate[i][j];
+                if (temp === BLANK_CELL) {// if the cell to jump is an empty
+                    moves.push([i, j]);
+                } else {// else if has a rom then
+                    if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? DARK : LIGHT) >= 0) {// if the rom has the same color
+                        break;
+                    } else if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if the rom has diff color
+                        const ni = i - 1;
+                        const nj = j + 1;
+                        if (ni >= 0 && nj <= 7) {// jump over and verify it is within the board
+                            temp = this.gameTemplate[ni][nj];
+                            if (temp === BLANK_CELL) {// if the cell to jump is an empty
+                                moves.push([ni, nj]);
+                                break;
+                            }
+                        }
+                    }
+                }
+                i -= 1;
+                j += 1;
+            }
+            // TOP LEFT
+            i = x - 1;
+            j = y - 1;
+            while (i >= 0 && j >= 0) {// if is within the board
+                temp = this.gameTemplate[i][j];
+                if (temp === BLANK_CELL) {// if the cell to jump is an empty
+                    moves.push([i, j]);
+                } else {// else if has a rom then
+                    if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? DARK : LIGHT) >= 0) {// if the rom has the same color
+                        break;
+                    } else if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if the rom has diff color
+                        const ni = i - 1;
+                        const nj = j - 1;
+                        if (ni >= 0 && nj >= 0) {// jump over and verify it is within the board
+                            temp = this.gameTemplate[ni][nj];
+                            if (temp === BLANK_CELL) {// if the cell to jump is an empty
+                                moves.push([ni, nj]);
+                                break;
+                            }
+                        }
+                    }
+                }
+                i -= 1;
+                j -= 1;
+            }
+            return moves;
+        };
+        const validateTopMoves = (x, y) => {
+            let i, j, temp, moves = [];
+            // TOP RIGHT
+            i = x - 1;
+            j = y + 1;
+            if (i >= 0 && j <= 7) {// if is within the board
+                temp = this.gameTemplate[i][j];
+                if (temp === BLANK_CELL) {// if the cell to jump is empty
+                    moves.push([i, j]);
+                } else {// else if has a rom then
+                    i = x - 2;
+                    j = y + 2;
+                    if (i >= 0 && j <= 7) {// jump over and verify ist within the board
+                        temp = this.gameTemplate[i][j];
+                        if (temp === BLANK_CELL) {// if its an empty cell
+                            temp = this.gameTemplate[i + 1][j - 1];
+                            if (temp.indexOf(DARK) >= 0) {// if the rom is of other color
+                                moves.push([i, j]);
+                            }
+                        }
+                    }
+                }
+            }
+            // TOP LEFT
+            i = x - 1;
+            j = y - 1;
+            if (i >= 0 && j >= 0) {// if is within the board
+                temp = this.gameTemplate[i][j];
+                if (temp === BLANK_CELL) {// if the cell to jump is empty
+                    moves.push([i, j]);
+                } else {// else if has a rom then
+                    i = x - 2;
+                    j = y - 2;
+                    if (i >= 0 && j >= 0) {// jump over and verify ist within the board
+                        temp = this.gameTemplate[i][j];
+                        if (temp === BLANK_CELL) {// if its an empty cell
+                            temp = this.gameTemplate[i + 1][j + 1];
+                            if (temp.indexOf(DARK) >= 0) {// if the rom is of other color
+                                moves.push([i, j]);
+                            }
+                        }
+                    }
+                }
+            }
+            return moves;
+
+        };
+        const validateBottomMoves = (x, y) => {
+            let i, j, temp, moves = [];
+            // BOTTOM RIGHT
+            i = x + 1;
+            j = y + 1;
+            if (i <= 7 && j <= 7) {// if is within the board
+                temp = this.gameTemplate[i][j];
+                if (temp === BLANK_CELL) {// if the cell to jump is an empty
+                    moves.push([i, j]);
+                } else {// else if has a rom then
+                    i = x + 2;
+                    j = y + 2;
+                    if (i <= 7 && j <= 7) {// jump over and verify ist within the board
+                        temp = this.gameTemplate[i][j];
+                        if (temp === BLANK_CELL) {// if its an empty cell
+                            temp = this.gameTemplate[i - 1][j - 1];
+                            if (temp.indexOf(LIGHT) >= 0) {// if the rom is of other color
+                                moves.push([i, j]);
+                            }
+                        }
+                    }
+                }
+            }
+            // BOTTOM LEFT
+            i = x + 1;
+            j = y - 1;
+            if (i <= 7 && j >= 0) {// if is within the board
+                temp = this.gameTemplate[i][j];
+                if (temp === BLANK_CELL) {// if the cell to jump is an empty
+                    moves.push([i, j]);
+                } else {// else if has a rom then
+                    i = x + 2;
+                    j = y - 2;
+                    if (i <= 7 && j >= 0) {// jump over and verify ist within the board
+                        temp = this.gameTemplate[i][j];
+                        if (temp === BLANK_CELL) {// if its an empty cell
+                            temp = this.gameTemplate[i - 1][j + 1];
+                            if (temp.indexOf(LIGHT) >= 0) {// if the rom is of other color
+                                moves.push([i, j]);
+                            }
+                        }
+                    }
+                }
+            }
+            return moves;
+
+        };
+
+        if (rom.indexOf(DARK) >= 0) {// if the rom is DARK
+            if (rom === DARK_QUEEN) {// if its a QUEEN
+                moves.push(...validateQueenMoves(x, y, DARK_QUEEN));
+            } else {
+                moves.push(...validateBottomMoves(x, y))
+            }
+        } else if (rom.indexOf(LIGHT) >= 0) {// if the rom is LIGHT
+            if (rom === LIGHT_QUEEN) {// if its a QUEEN
+                moves.push(...validateQueenMoves(x, y, LIGHT_QUEEN));
+            } else {
+                moves.push(...validateTopMoves(x, y))
+            }
+        }
         return moves;
     }
 

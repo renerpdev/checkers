@@ -118,7 +118,6 @@ export default class GameUI {
         // } else {
         //     $this.gameController.changeTurn();
         // }
-
     }
 
     canMove(start, end) {

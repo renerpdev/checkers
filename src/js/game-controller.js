@@ -88,7 +88,18 @@ const DISABLED_CELLS = [
     [false, false, false, false, false, false, false, false],
     [false, false, false, false, false, false, false, false],
     [false, false, false, false, false, false, false, false],
-]
+];
+
+const INVALID_MOVES = [
+    [], [], [], [], [], [], [], [],
+    [], [], [], [], [], [], [], [],
+    [], [], [], [], [], [], [], [],
+    [], [], [], [], [], [], [], [],
+    [], [], [], [], [], [], [], [],
+    [], [], [], [], [], [], [], [],
+    [], [], [], [], [], [], [], [],
+    [], [], [], [], [], [], [], [],
+];
 
 //------------------------------------------------------
 
@@ -99,6 +110,7 @@ export default class GameController {
         this._gameBoard = [];
         this._gameTemplate = [];
         this._validCells = [];
+        this._validMoves = [];
         this._players = players;
         this._currentPlayerIndex = 0;
         this.createBoard();
@@ -106,6 +118,14 @@ export default class GameController {
 
     get gameBoard() {
         return this._gameBoard;
+    }
+
+    get validMoves() {
+        return this._validMoves;
+    }
+
+    set validMoves(value) {
+        this._validMoves = JSON.parse(JSON.stringify(value));
     }
 
     get currentPlayerIndex() {
@@ -145,7 +165,7 @@ export default class GameController {
             p.romsAmount = 12;
             return p;
         });
-        this._gameTemplate = JSON.parse(JSON.stringify(TEMPLATES.oneKill));
+        this._gameTemplate = JSON.parse(JSON.stringify(TEMPLATES.initial));
         this.getAllPossibleMoves();
     }
 
@@ -222,13 +242,13 @@ export default class GameController {
             const [i, j] = cell;
             // if its a LIGHT rom
             if (draggedRom.indexOf(LIGHT) >= 0) {
-                if ((i + 2 === x2 && j + 2 === y2) || (i + 2 === x2 && j - 2 === y2)) {
+                if ((x2 - 2 === i && y2 + 2 === j) || (x2 - 2 === i && y2 - 2 === j)) {
                     return cell;
                 }
             }
             // if its DARK rom
             else if (draggedRom.indexOf(DARK) >= 0) {
-                if ((i - 2 === x2 && j - 2 === y2) || (i + 2 === x2 && j - 2 === y2)) {
+                if ((x2 + 2 === i && y2 + 2 === j) || (x2 + 2 === i && y2 - 2 === j)) {
                     return cell;
                 }
             }
@@ -238,9 +258,10 @@ export default class GameController {
             if (moves.length > 0) {
                 // disable all cells
                 this.validCells = DISABLED_CELLS;
+                this.validMoves = INVALID_MOVES;
                 // enable only the specific ones
                 this.validCells[x2][y2] = true;
-                console.log(moves, this.validCells);
+                this.validMoves[x2][y2] = moves;
                 return KEEP_PLAYING;
             }
             return CHANGE_TURN;
@@ -251,7 +272,10 @@ export default class GameController {
     createBoard() {
         let counter, row;
         for (let i = 0; i < 8; i++) {
+            // initialize validCells array
             this.validCells.push([]);
+            // initialize validMoves array
+            this.validMoves.push([]);
             if (i % 2 == 0) {
                 counter = 1;
             } else {
@@ -259,7 +283,10 @@ export default class GameController {
             }
             row = [];
             for (let j = 0; j < 8; j++) {
+                // initialize validCells array
                 this.validCells[i].push(false);
+                // initialize validMoves array
+                this.validMoves[i].push([]);
                 if (counter == j) {
                     counter += 2;
                     row.push(LIGHT_CELL);
@@ -290,7 +317,7 @@ export default class GameController {
     isValidMove(start, end) {
         const [i0, j0] = start;
         const [i1, j1] = end;
-        const validMoves = this.getValidMoves(+i0, +j0);
+        const validMoves = this.validMoves[+i0][+j0];
         const moves = validMoves.filter(m => m[0] == i1 && m[1] == j1);
         return moves.length > 0;
     }
@@ -304,6 +331,7 @@ export default class GameController {
                     const validMoves = this.getValidMoves(i, j);
                     if (validMoves.length > 0) {
                         this._validCells[i][j] = true;
+                        this._validMoves[i][j] = validMoves;
                         moves.push([i, j]);
                     } else {
                         this._validCells[i][j] = false;

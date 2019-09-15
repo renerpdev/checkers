@@ -59,7 +59,7 @@ export default class GameUI {
                             const start = [+i0, +j0];
                             const end = [+i1, +j1];
                             if ($this.canMove(start, end)) {
-                                const state = $this.gameController.handleTurn(start, end);
+                                const state = $this.gameController.handleMove(start, end);
                                 if (state === CHANGE_TURN) {
                                     console.log('CHANGE_TURN')
                                     $this.gameController.changeTurn();

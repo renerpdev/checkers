@@ -73,7 +73,7 @@ const TEMPLATES = {
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
     ]
@@ -165,7 +165,7 @@ export default class GameController {
             p.romsAmount = 12;
             return p;
         });
-        this._gameTemplate = JSON.parse(JSON.stringify(TEMPLATES.initial));
+        this._gameTemplate = JSON.parse(JSON.stringify(TEMPLATES.oneKill));
         this.getAllPossibleMoves();
     }
 
@@ -238,8 +238,6 @@ export default class GameController {
                     this.updateCell(x2, y2, draggedRom);
                 }
             }
-        } else if (draggedRom === DARK_QUEEN || draggedRom === LIGHT_QUEEN) {
-            this.updateCell(x2, y2, draggedRom);
         }
 
         const moves = this.getValidMoves(x2, y2).filter(cell => {
@@ -334,7 +332,7 @@ export default class GameController {
         const [i0, j0] = start;
         const [i1, j1] = end;
         const validMoves = this.validMoves[+i0][+j0];
-        const moves = validMoves.filter(m => m[0] == i1 && m[1] == j1);
+        const moves = validMoves.filter(m => m[0] === (+i1) && m[1] === (+j1));
         return moves.length > 0;
     }
 

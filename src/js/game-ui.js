@@ -24,6 +24,7 @@ export default class GameUI {
         this.boardUI = $(boardSelector);
         this.gameController = new GameController();
         this.draggedRom = null;
+        this.clickedRom = null;
     }
 
     restartGame() {
@@ -58,19 +59,7 @@ export default class GameUI {
                             const [i1, j1] = data.split('-');
                             const start = [+i0, +j0];
                             const end = [+i1, +j1];
-                            if ($this.canMove(start, end)) {
-                                const state = $this.gameController.handleMove(start, end);
-                                if (state === CHANGE_TURN) {
-                                    console.log('CHANGE_TURN')
-                                    $this.gameController.changeTurn();
-                                    let gameState = $this.gameController.isGameEnd();
-                                    $this.handleGameState(gameState);
-                                } else if (KEEP_PLAYING) {
-                                    console.log('KEEP_PLAYING')
-                                    $this.paintBoard();
-                                }
-
-                            }
+                            $this.handleTurn(start, end);
                         }
                     },
                     onDragEnter: (event, callback) => {
@@ -98,8 +87,66 @@ export default class GameUI {
         })(this)
     }
 
+    handleTurn(start, end) {
+        if (this.canMove(start, end)) {
+            const state = this.gameController.handleMove(start, end);
+            if (state === CHANGE_TURN) {
+                console.log('CHANGE_TURN')
+                this.gameController.changeTurn();
+                let gameState = this.gameController.isGameEnd();
+                this.handleGameState(gameState);
+            } else if (KEEP_PLAYING) {
+                console.log('KEEP_PLAYING')
+                this.paintBoard();
+            }
+
+        }
+    }
+
+    paintCells(cells) {
+        cells.forEach(cell => {
+            const [i, j] = cell;
+            const c = $(`[data-coords=${i}-${j}]`);
+            $(c).addClass('dnd--dragging')
+        })
+    }
+
+    unpaintCells() {
+        const c = $('.dnd--dragging');
+        $(c).removeClass('dnd--dragging')
+    }
+
+    addOnClickEvent() {
+        (($this) => {
+            $(function () {
+                $('.dnd-draggable').click((ev) => {
+                    $this.unpaintCells();
+                    const parentNode = ev.target.parentNode;
+                    $this.clickedRom = $(parentNode).data('coords');
+                    const [i, j] = $this.clickedRom.split('-');
+                    $this.paintCells($this.gameController.getValidMoves(+i, +j));
+                })
+            });
+            $(function () {
+                $('.dnd-droppable').click((ev) => {
+                    const node = ev.target;
+                    const data = $(node).data('coords');
+                    if (data && $this.clickedRom) {
+                        const [i0, j0] = $this.clickedRom.split('-');
+                        const [i1, j1] = data.split('-');
+                        const start = [+i0, +j0];
+                        const end = [+i1, +j1];
+                        $this.handleTurn(start, end);
+                        $this.unpaintCells();
+                    }
+                })
+            });
+        })(this);
+    }
+
     handleGameState(state) {
         this.draggedRom = null;
+        this.clickedRom = null;
         this.gameController.getAllPossibleMoves();
         this.paintBoard();
         if (state === DRAW) { // if its a DRAW
@@ -112,15 +159,6 @@ export default class GameUI {
         } else if (state === LOSS) { // if its a LOSS
             this.endGame();
         }
-        //
-        // if (winner !== false) {
-        //     if (typeof winner === 'number') {
-        //         winner = $this.gameController.players[winner].playerType !== PC;
-        //     }
-        //     $this.splashText(winner);
-        // } else {
-        //     $this.gameController.changeTurn();
-        // }
     }
 
     canMove(start, end) {
@@ -171,5 +209,6 @@ export default class GameUI {
             })
         });
         this.addDnD();
+        this.addOnClickEvent();
     }
 }

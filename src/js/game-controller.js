@@ -166,7 +166,7 @@ export default class GameController {
             p.romsAmount = 12;
             return p;
         });
-        this._gameTemplate = JSON.parse(JSON.stringify(TEMPLATES.initial));
+        this._gameTemplate = JSON.parse(JSON.stringify(TEMPLATES.oneKill));
         this.getAllPossibleMoves();
     }
 
@@ -235,7 +235,7 @@ export default class GameController {
             this.updateCell(x2, y2, draggedRom);
         }
 
-        const moves = this.getKillingMoves(this.getValidMoves(x2, y2), x2, y2);
+        const moves = this.getValidMoves(x2, y2);
         this.updateCell(x, y, BLANK_CELL);
 
         // if can continue playing but has no moves
@@ -330,11 +330,11 @@ export default class GameController {
     }
 
     getValidMoves(x, y) {
-        const moves = [];
+        let paths = {};
         const rom = this.gameTemplate[x][y];
 
         const validateQueenMoves = (x, y, romColor) => {
-            let i, j, temp, moves = [];
+            let i, j, temp, moves = [], p = {tr: [], tl: [], br: [], bl: []};
             // BOTTOM LEFT
             i = x + 1;
             j = y - 1;
@@ -360,7 +360,9 @@ export default class GameController {
                 i += 1;
                 j -= 1;
             }
+            p.bl.push(...moves);
             // BOTTOM RIGHT
+            moves = [];
             i = x + 1;
             j = y + 1;
             while (i <= 7 && j <= 7) {// if is within the board
@@ -385,7 +387,9 @@ export default class GameController {
                 i += 1;
                 j += 1;
             }
+            p.br.push(...moves);
             // TOP RIGHT
+            moves = [];
             i = x - 1;
             j = y + 1;
             while (i >= 0 && j <= 7) {// if is within the board
@@ -410,7 +414,9 @@ export default class GameController {
                 i -= 1;
                 j += 1;
             }
+            p.tr.push(...moves);
             // TOP LEFT
+            moves = [];
             i = x - 1;
             j = y - 1;
             while (i >= 0 && j >= 0) {// if is within the board
@@ -435,10 +441,11 @@ export default class GameController {
                 i -= 1;
                 j -= 1;
             }
-            return moves;
+            p.tl.push(...moves);
+            return p;
         };
         const validateTopMoves = (x, y) => {
-            let i, j, temp, moves = [];
+            let i, j, temp, moves = [], p = {tr: [], tl: [], br: [], bl: []};
             // TOP RIGHT
             i = x - 1;
             j = y + 1;
@@ -460,7 +467,9 @@ export default class GameController {
                     }
                 }
             }
+            p.tr.push(...moves);
             // TOP LEFT
+            moves = [];
             i = x - 1;
             j = y - 1;
             if (i >= 0 && j >= 0) {// if is within the board
@@ -481,11 +490,12 @@ export default class GameController {
                     }
                 }
             }
-            return moves;
+            p.tl.push(...moves);
+            return p;
 
         };
         const validateBottomMoves = (x, y) => {
-            let i, j, temp, moves = [];
+            let i, j, temp, moves = [], p = {tr: [], tl: [], br: [], bl: []};
             // BOTTOM RIGHT
             i = x + 1;
             j = y + 1;
@@ -507,7 +517,9 @@ export default class GameController {
                     }
                 }
             }
+            p.br.push(...moves);
             // BOTTOM LEFT
+            moves = [];
             i = x + 1;
             j = y - 1;
             if (i <= 7 && j >= 0) {// if is within the board
@@ -528,57 +540,59 @@ export default class GameController {
                     }
                 }
             }
-            return moves;
+            p.bl.push(...moves);
+            return p;
 
         };
 
         if (rom.indexOf(DARK) >= 0) {// if the rom is DARK
             if (rom === DARK_QUEEN) {// if its a QUEEN
-                moves.push(...validateQueenMoves(x, y, DARK_QUEEN));
+                paths = validateQueenMoves(x, y, DARK_QUEEN);
             } else {
-                moves.push(...validateBottomMoves(x, y))
+                paths = validateBottomMoves(x, y)
             }
         } else if (rom.indexOf(LIGHT) >= 0) {// if the rom is LIGHT
             if (rom === LIGHT_QUEEN) {// if its a QUEEN
-                moves.push(...validateQueenMoves(x, y, LIGHT_QUEEN));
+                paths = validateQueenMoves(x, y, LIGHT_QUEEN);
             } else {
-                moves.push(...validateTopMoves(x, y))
+                paths = validateTopMoves(x, y)
             }
         }
-        const killMoves = this.getKillingMoves(moves, x, y);
+        const killMoves = this.getKillingMoves(paths, x, y);
         if (killMoves.length > 0) {// if there are move for killing then returns them
             return killMoves;
         }
-        return moves;
+        return paths.bl.concat(paths.br).concat(paths.tr).concat(paths.tl);
     }
 
-    getKillingMoves(moves, x, y) {
+    getKillingMoves(paths, x, y) {
         const rom = this.gameTemplate[x][y];
-        return moves.filter(move => {
-            const [i, j] = move;
-            // if its a DARK rom
-            if (rom.indexOf(DARK) >= 0) {
-                // if its a QUEEN
-                if (rom === DARK_QUEEN) {
-
-                } else {
+        const validateKillMove = (rom, path, x, y) => {
+            return path.filter(move => {
+                const [i, j] = move;
+                //if its DARK
+                if (rom.indexOf(DARK) >= 0) {
                     if ((i - 2 === x && j + 2 === y) || (i - 2 === x && j - 2 === y)) {
                         return move;
                     }
                 }
-            }
-            // if its LIGHT rom
-            else if (rom.indexOf(LIGHT) >= 0) {
-                // if its a QUEEN
-                if (rom === LIGHT_QUEEN) {
-
-                } else {
+                else {//if its LIGHT
                     if ((i + 2 === x && j + 2 === y) || (i + 2 === x && j - 2 === y)) {
                         return move;
                     }
                 }
-            }
-        });
+            });
+        };
+        const p = {};
+        if (rom.indexOf(QUEEN) >= 0) {// if its a QUEEN
+
+            return [];
+        } else {// if its not a QUEEN
+            return validateKillMove(rom, paths.bl, x, y)
+                .concat(validateKillMove(rom, paths.br, x, y))
+                .concat(validateKillMove(rom, paths.tl, x, y))
+                .concat(validateKillMove(rom, paths.tr, x, y));
+        }
     }
 
 }

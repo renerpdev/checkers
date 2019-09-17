@@ -48,33 +48,13 @@ const TEMPLATES = {
         [LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL],
         [BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
     ],
-    oneMove: [
-        [DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL],
-        [BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM],
-        [DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL],
-        [BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
-        [LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
-        [LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-    ],
     testing: [
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [DARK_QUEEN, BLANK_CELL, DARK_QUEEN, BLANK_CELL, DARK_QUEEN, BLANK_CELL, DARK_QUEEN, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, LIGHT_QUEEN],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-    ],
-    oneKill: [
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
     ]
@@ -166,7 +146,7 @@ export default class GameController {
             p.romsAmount = 12;
             return p;
         });
-        this._gameTemplate = JSON.parse(JSON.stringify(TEMPLATES.oneKill));
+        this._gameTemplate = JSON.parse(JSON.stringify(TEMPLATES.initial));
         this.getAllPossibleMoves();
     }
 
@@ -198,16 +178,17 @@ export default class GameController {
         let state = CHANGE_TURN;
         const template = this.gameTemplate;
         const draggedRom = template[x][y];
-        if ((x2 === 0 || x2 === 7) && draggedRom.indexOf(QUEEN) < 0) {// if its on the bottom-top edge and its not a QUEEN
-            this.updateCell(x2, y2, draggedRom.indexOf(LIGHT) >= 0 ? LIGHT_QUEEN : DARK_QUEEN);// put a QUEEN
-            state = CHANGE_TURN;
-        } else if (x2 < x) {// Going TOP
+        if (x2 < x) {// Going TOP
             if (draggedRom.indexOf(LIGHT) >= 0 || draggedRom.indexOf(QUEEN) >= 0) {// if its LIGHT rom or any QUEEN
-                state = CHANGE_TURN;
                 if (y2 > y) {// TOP RIGHT
                     nx = x2 + 1;
                     ny = y2 - 1;
-                    if (nx <= 7 && ny >= 0) {
+                    if ((x2 === 0) && draggedRom.indexOf(QUEEN) < 0) {// if its on the bottom-top edge and its not a QUEEN
+                        this.updateCell(x2, y2, draggedRom.indexOf(LIGHT) >= 0 ? LIGHT_QUEEN : DARK_QUEEN);// put a QUEEN
+                        this.updateCell(nx, ny, BLANK_CELL);
+                        this.updateCell(x, y, BLANK_CELL);
+                        return CHANGE_TURN;
+                    } else if (nx <= 7 && ny >= 0) {
                         const temp = this.gameTemplate[nx][ny];
                         if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
                             this.players[1].beKilled();
@@ -218,7 +199,12 @@ export default class GameController {
                 } else {// TOP LEFT
                     nx = x2 + 1;
                     ny = y2 + 1;
-                    if (nx <= 7 && ny <= 7) {
+                    if ((x2 === 0) && draggedRom.indexOf(QUEEN) < 0) {// if its on the bottom-top edge and its not a QUEEN
+                        this.updateCell(x2, y2, draggedRom.indexOf(LIGHT) >= 0 ? LIGHT_QUEEN : DARK_QUEEN);// put a QUEEN
+                        this.updateCell(nx, ny, BLANK_CELL);
+                        this.updateCell(x, y, BLANK_CELL);
+                        return CHANGE_TURN;
+                    } else if (nx <= 7 && ny <= 7) {
                         const temp = this.gameTemplate[nx][ny];
                         if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
                             this.players[1].beKilled();
@@ -231,11 +217,15 @@ export default class GameController {
             }
         } else if (x2 > x) {// Going BOTTOM
             if (draggedRom.indexOf(DARK) >= 0 || draggedRom.indexOf(QUEEN) >= 0) {//if its a DARK rom or any QUEEN
-                state = CHANGE_TURN;
                 if (y2 > y) {// BOTTOM RIGHT
                     nx = x2 - 1;
                     ny = y2 - 1;
-                    if (nx >= 0 && ny >= 0) {
+                    if ((x2 === 7) && draggedRom.indexOf(QUEEN) < 0) {// if its on the bottom-top edge and its not a QUEEN
+                        this.updateCell(x2, y2, draggedRom.indexOf(LIGHT) >= 0 ? LIGHT_QUEEN : DARK_QUEEN);// put a QUEEN
+                        this.updateCell(nx, ny, BLANK_CELL);
+                        this.updateCell(x, y, BLANK_CELL);
+                        return CHANGE_TURN;
+                    } else if (nx >= 0 && ny >= 0) {
                         const temp = this.gameTemplate[nx][ny];
                         if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
                             this.players[1].beKilled();
@@ -246,7 +236,12 @@ export default class GameController {
                 } else {// BOTTOM LEFT
                     nx = x2 - 1;
                     ny = y2 + 1;
-                    if (nx >= 0 && ny <= 7) {
+                    if ((x2 === 7) && draggedRom.indexOf(QUEEN) < 0) {// if its on the bottom-top edge and its not a QUEEN
+                        this.updateCell(x2, y2, draggedRom.indexOf(LIGHT) >= 0 ? LIGHT_QUEEN : DARK_QUEEN);// put a QUEEN
+                        this.updateCell(nx, ny, BLANK_CELL);
+                        this.updateCell(x, y, BLANK_CELL);
+                        return CHANGE_TURN;
+                    } else if (nx >= 0 && ny <= 7) {
                         const temp = this.gameTemplate[nx][ny];
                         if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
                             this.players[1].beKilled();
@@ -307,7 +302,6 @@ export default class GameController {
         //         this.updateCell(x2, y2, draggedRom);
         //     }
         // }
-        console.log(start, end)
         const moves = this.getKillingMoves(this.getPaths(x2, y2), x2, y2);
         this.updateCell(x, y, BLANK_CELL);
 
@@ -375,40 +369,48 @@ export default class GameController {
     isValidMove(start, end) {
         const [i0, j0] = start;
         const [i1, j1] = end;
-        const validMoves = this.validMoves[i0][j0];
-        const moves = validMoves.filter(m => m[0] === i1 && m[1] === j1);
-        return moves.length > 0;
+        if (this.validCells[i0][j0]){
+            let validMoves = this.getValidMoves(i0, j0).moves;
+            const moves = validMoves.filter(m => m[0] === i1 && m[1] === j1);
+            return moves.length > 0;
+        }
+        return false;
     }
 
     getAllPossibleMoves() {
         const romColor = this.getCurrentPlayer().romColor;
+        this.validCells = DISABLED_CELLS;// reset array of valid moves
+        this.validMoves = INVALID_MOVES;// reset array of valid moves
         const moves = [];
+        const killMoves = [];
         this.gameTemplate.forEach((row, i) => {
             row.forEach((rom, j) => {
                 if (rom.indexOf(romColor) >= 0) {
                     const validMoves = this.getValidMoves(i, j);
-                    if (validMoves.length > 0) {
-                        this._validCells[i][j] = true;
-                        this._validMoves[i][j] = validMoves;
-                        moves.push([i, j]);
-                    } else {
-                        this._validCells[i][j] = false;
+                    if (validMoves.kill && validMoves.moves.length > 0) {// if contains kill moves
+                        killMoves.push({coords: [i, j], moves: validMoves});
+                    } else if (!validMoves.kill && validMoves.moves.length > 0) {
+                        moves.push({coords: [i, j], moves: validMoves});
                     }
-                } else {
-                    this._validCells[i][j] = false;
                 }
             })
         });
-        return moves;
+        const movesIterator = killMoves.length > 0 ? killMoves : moves;
+        movesIterator.forEach(obj => {
+            const [i, j] = obj.coords;
+            this.validCells[i][j] = true;
+            this.validMoves[i][j] = obj.moves;
+        });
+        return movesIterator;
     }
 
     getValidMoves(x, y) {
         const paths = this.getPaths(x, y);
         const killMoves = this.getKillingMoves(paths, x, y);
         if (killMoves.length > 0) {// if there are move for killing then returns them
-            return killMoves;
+            return {moves: killMoves, kill: true};
         }
-        return paths.br.concat(paths.bl).concat(paths.tl).concat(paths.tr);
+        return {moves: paths.br.concat(paths.bl).concat(paths.tl).concat(paths.tr), kill: false};
     }
 
     getPaths(x, y) {
@@ -645,7 +647,6 @@ export default class GameController {
     }
 
     getKillingMoves(paths, x, y) {
-        console.log(paths)
         const rom = this.gameTemplate[x][y];
         const validateKillMove = (rom, path, x, y) => {
             return path.filter(move => {
@@ -761,7 +762,6 @@ export default class GameController {
                     j--;
                 }
             }
-            console.log(moves)
             return moves;
         } else {// if its not a QUEEN
             return validateKillMove(rom, paths.bl, x, y)

@@ -124,7 +124,7 @@ export default class GameUI {
                     const parentNode = ev.target.parentNode;
                     $this.clickedRom = $(parentNode).data('coords');
                     const [i, j] = $this.clickedRom.split('-');
-                    $this.paintCells($this.gameController.getValidMoves(+i, +j));
+                    $this.paintCells($this.gameController.getValidMoves(+i, +j).moves);
                 })
             });
             $(function () {

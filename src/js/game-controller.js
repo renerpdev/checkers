@@ -49,14 +49,14 @@ const TEMPLATES = {
         [BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
     ],
     testing: [
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [LIGHT_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
     ]
 };
 
@@ -151,6 +151,7 @@ export default class GameController {
     }
 
     isGameEnd() {
+        console.log(this.players[0].romsAmount, this.players[1].romsAmount)
         // Verify if the player can moves any rom
         const possibleMoves = this.getAllPossibleMoves();
         // Verify if the player has roms
@@ -191,7 +192,7 @@ export default class GameController {
                     } else if (nx <= 7 && ny >= 0) {
                         const temp = this.gameTemplate[nx][ny];
                         if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-                            this.players[1].beKilled();
+                            this.players[draggedRom.indexOf(LIGHT)>=0?1:0].beKilled();
                             state = KEEP_PLAYING;
                             this.updateCell(nx, ny, BLANK_CELL);
                         }
@@ -207,7 +208,7 @@ export default class GameController {
                     } else if (nx <= 7 && ny <= 7) {
                         const temp = this.gameTemplate[nx][ny];
                         if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-                            this.players[1].beKilled();
+                            this.players[draggedRom.indexOf(LIGHT)>=0?1:0].beKilled();
                             state = KEEP_PLAYING;
                             this.updateCell(nx, ny, BLANK_CELL);
                         }
@@ -228,7 +229,7 @@ export default class GameController {
                     } else if (nx >= 0 && ny >= 0) {
                         const temp = this.gameTemplate[nx][ny];
                         if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-                            this.players[1].beKilled();
+                            this.players[draggedRom.indexOf(LIGHT)>=0?1:0].beKilled();
                             state = KEEP_PLAYING;
                             this.updateCell(nx, ny, BLANK_CELL);
                         }
@@ -244,7 +245,7 @@ export default class GameController {
                     } else if (nx >= 0 && ny <= 7) {
                         const temp = this.gameTemplate[nx][ny];
                         if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-                            this.players[1].beKilled();
+                            this.players[draggedRom.indexOf(LIGHT)>=0?1:0].beKilled();
                             state = KEEP_PLAYING;
                             this.updateCell(nx, ny, BLANK_CELL);
                         }
@@ -369,7 +370,7 @@ export default class GameController {
     isValidMove(start, end) {
         const [i0, j0] = start;
         const [i1, j1] = end;
-        if (this.validCells[i0][j0]){
+        if (this.validCells[i0][j0]) {
             let validMoves = this.getValidMoves(i0, j0).moves;
             const moves = validMoves.filter(m => m[0] === i1 && m[1] === j1);
             return moves.length > 0;

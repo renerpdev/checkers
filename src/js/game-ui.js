@@ -1,4 +1,4 @@
-import GameController, {
+import {
     LIGHT_ROM,
     DARK_ROM,
     LIGHT_CELL,
@@ -9,9 +9,10 @@ import GameController, {
     KEEP_PLAYING,
     DRAW,
     WIN, LOSS, DARK, LIGHT, CHANGE_TURN
-} from './game-controller'
+} from './constants'
 import * as $ from 'jquery'
 import Player from "./player";
+import GameController from "./game-controller";
 
 // BOARD ROMS
 const DARK_ROM_IMAGE = require('../images/dark-rom.png');

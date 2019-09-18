@@ -49,14 +49,14 @@ const TEMPLATES = {
         [BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
     ],
     testing: [
-        [DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL, DARK_ROM, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_QUEEN, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL, BLANK_CELL],
+        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, DARK_ROM, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, LIGHT_ROM],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
         [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL, BLANK_CELL],
-        [BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM, BLANK_CELL, LIGHT_ROM],
     ]
 };
 
@@ -192,7 +192,7 @@ export default class GameController {
                     } else if (nx <= 7 && ny >= 0) {
                         const temp = this.gameTemplate[nx][ny];
                         if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-                            this.players[draggedRom.indexOf(LIGHT)>=0?1:0].beKilled();
+                            this.players[draggedRom.indexOf(LIGHT) >= 0 ? 1 : 0].beKilled();
                             state = KEEP_PLAYING;
                             this.updateCell(nx, ny, BLANK_CELL);
                         }
@@ -208,7 +208,7 @@ export default class GameController {
                     } else if (nx <= 7 && ny <= 7) {
                         const temp = this.gameTemplate[nx][ny];
                         if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-                            this.players[draggedRom.indexOf(LIGHT)>=0?1:0].beKilled();
+                            this.players[draggedRom.indexOf(LIGHT) >= 0 ? 1 : 0].beKilled();
                             state = KEEP_PLAYING;
                             this.updateCell(nx, ny, BLANK_CELL);
                         }
@@ -229,7 +229,7 @@ export default class GameController {
                     } else if (nx >= 0 && ny >= 0) {
                         const temp = this.gameTemplate[nx][ny];
                         if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-                            this.players[draggedRom.indexOf(LIGHT)>=0?1:0].beKilled();
+                            this.players[draggedRom.indexOf(LIGHT) >= 0 ? 1 : 0].beKilled();
                             state = KEEP_PLAYING;
                             this.updateCell(nx, ny, BLANK_CELL);
                         }
@@ -245,7 +245,7 @@ export default class GameController {
                     } else if (nx >= 0 && ny <= 7) {
                         const temp = this.gameTemplate[nx][ny];
                         if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-                            this.players[draggedRom.indexOf(LIGHT)>=0?1:0].beKilled();
+                            this.players[draggedRom.indexOf(LIGHT) >= 0 ? 1 : 0].beKilled();
                             state = KEEP_PLAYING;
                             this.updateCell(nx, ny, BLANK_CELL);
                         }
@@ -255,54 +255,6 @@ export default class GameController {
             this.updateCell(x2, y2, draggedRom);
         }
 
-
-        // if (draggedRom.indexOf(LIGHT) >= 0 || draggedRom.indexOf(QUEEN) >= 0) {// if its LIGHT rom or any QUEEN
-        //     if (x2 === 0 && draggedRom.indexOf(QUEEN) < 0) {// if reach the goal
-        //         this.updateCell(x2, y2, LIGHT_QUEEN);
-        //         state = CHANGE_TURN;
-        //     } else {
-        //
-        //         nx = x2 + 1;
-        //         ny = y2 - 1;
-        //         if (nx <= 7 && ny >= 0) {
-        //             const temp = this.gameTemplate[nx][ny];
-        //             if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-        //                 this.updateCell(nx, ny, BLANK_CELL);
-        //                 this.players[1].beKilled();
-        //                 state = KEEP_PLAYING;
-        //             }
-        //         }
-        //     }
-        //
-        // }
-        // if (draggedRom.indexOf(DARK) >= 0 || draggedRom.indexOf(QUEEN) >= 0) {//if its a DARK rom or any QUEEN
-        //     if (x2 === 7 && draggedRom.indexOf(QUEEN) < 0) {// if reach the goal
-        //         this.updateCell(x2, y2, DARK_QUEEN);
-        //         state = CHANGE_TURN;
-        //     } else {
-        //         let nx = x2 - 1;
-        //         let ny = y2 - 1;
-        //         if (nx >= 0 && ny >= 0) {
-        //             const temp = this.gameTemplate[nx][ny];
-        //             if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-        //                 this.updateCell(nx, ny, BLANK_CELL);
-        //                 this.players[1].beKilled();
-        //                 state = KEEP_PLAYING;
-        //             }
-        //         }
-        //         nx = x2 - 1;
-        //         ny = y2 + 1;
-        //         if (nx >= 0 && ny <= 7) {
-        //             const temp = this.gameTemplate[nx][ny];
-        //             if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-        //                 this.updateCell(nx, ny, BLANK_CELL);
-        //                 this.players[1].beKilled();
-        //                 state = KEEP_PLAYING;
-        //             }
-        //         }
-        //         this.updateCell(x2, y2, draggedRom);
-        //     }
-        // }
         const moves = this.getKillingMoves(this.getPaths(x2, y2), x2, y2);
         this.updateCell(x, y, BLANK_CELL);
 
@@ -380,8 +332,6 @@ export default class GameController {
 
     getAllPossibleMoves() {
         const romColor = this.getCurrentPlayer().romColor;
-        this.validCells = DISABLED_CELLS;// reset array of valid moves
-        this.validMoves = INVALID_MOVES;// reset array of valid moves
         const moves = [];
         const killMoves = [];
         this.gameTemplate.forEach((row, i) => {
@@ -408,16 +358,18 @@ export default class GameController {
     getValidMoves(x, y) {
         const paths = this.getPaths(x, y);
         const killMoves = this.getKillingMoves(paths, x, y);
+        let obj = {};
         if (killMoves.length > 0) {// if there are move for killing then returns them
-            return {moves: killMoves, kill: true};
+            obj = {moves: killMoves, kill: true};
+        } else {
+            obj = {moves: paths.br.concat(paths.bl).concat(paths.tl).concat(paths.tr), kill: false};
         }
-        return {moves: paths.br.concat(paths.bl).concat(paths.tl).concat(paths.tr), kill: false};
+        return obj;
     }
 
     getPaths(x, y) {
         let paths = {};
         const rom = this.gameTemplate[x][y];
-
         const validateQueenMoves = (x, y, romColor) => {
             let i, j, temp, moves = [], p = {tr: [], tl: [], br: [], bl: []};
             // BOTTOM LEFT
@@ -431,12 +383,14 @@ export default class GameController {
                     if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? DARK : LIGHT) >= 0) {// if the rom has the same color
                         break;
                     } else if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if the rom has diff color
-                        const ni = i + 1;
-                        const nj = j - 1;
+                        let ni = i + 1;
+                        let nj = j - 1;
                         if (ni <= 7 && nj >= 0) {// jump over and verify it is within the board
                             temp = this.gameTemplate[ni][nj];
                             if (temp === BLANK_CELL) {// if the cell to jump is an empty
                                 moves.push([ni, nj]);
+                                break;
+                            } else {
                                 break;
                             }
                         }
@@ -450,6 +404,7 @@ export default class GameController {
             moves = [];
             i = x + 1;
             j = y + 1;
+
             while (i <= 7 && j <= 7) {// if is within the board
                 temp = this.gameTemplate[i][j];
                 if (temp === BLANK_CELL) {// if the cell to jump is an empty
@@ -458,12 +413,14 @@ export default class GameController {
                     if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? DARK : LIGHT) >= 0) {// if the rom has the same color
                         break;
                     } else if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if the rom has diff color
-                        const ni = i + 1;
-                        const nj = j + 1;
+                        let ni = i + 1;
+                        let nj = j + 1;
                         if (ni <= 7 && nj <= 7) {// jump over and verify it is within the board
                             temp = this.gameTemplate[ni][nj];
                             if (temp === BLANK_CELL) {// if the cell to jump is an empty
                                 moves.push([ni, nj]);
+                                break;
+                            } else {
                                 break;
                             }
                         }
@@ -485,12 +442,14 @@ export default class GameController {
                     if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? DARK : LIGHT) >= 0) {// if the rom has the same color
                         break;
                     } else if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if the rom has diff color
-                        const ni = i - 1;
-                        const nj = j + 1;
+                        let ni = i - 1;
+                        let nj = j + 1;
                         if (ni >= 0 && nj <= 7) {// jump over and verify it is within the board
                             temp = this.gameTemplate[ni][nj];
                             if (temp === BLANK_CELL) {// if the cell to jump is an empty
                                 moves.push([ni, nj]);
+                                break;
+                            } else {
                                 break;
                             }
                         }
@@ -512,12 +471,14 @@ export default class GameController {
                     if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? DARK : LIGHT) >= 0) {// if the rom has the same color
                         break;
                     } else if (temp.indexOf(romColor.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if the rom has diff color
-                        const ni = i - 1;
-                        const nj = j - 1;
+                        let ni = i - 1;
+                        let nj = j - 1;
                         if (ni >= 0 && nj >= 0) {// jump over and verify it is within the board
                             temp = this.gameTemplate[ni][nj];
                             if (temp === BLANK_CELL) {// if the cell to jump is an empty
                                 moves.push([ni, nj]);
+                                break;
+                            } else {
                                 break;
                             }
                         }

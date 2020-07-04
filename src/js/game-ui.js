@@ -176,6 +176,7 @@ export default class GameUI {
     paintBoard() {
         const boardRef = this.gameController.gameBoard;
         const templateRef = this.gameController.gameTemplate;
+        const possibleMoves = this.gameController.getAllPossibleMoves();
         this.boardUI.empty();
         boardRef.forEach((row, i) => {
             row.forEach((cell, j) => {
@@ -208,6 +209,11 @@ export default class GameUI {
                 }
                 this.boardUI.append(child);
             })
+        });
+        possibleMoves.forEach((move, k) => {
+            const [i, j] = move.coords;
+            var child = this.boardUI.children()[i * 8 + j];
+            child.classList.add('board__cell--movable');
         });
         this.addDnD();
         this.addOnClickEvent();

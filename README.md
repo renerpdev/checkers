@@ -10,6 +10,10 @@
 1. [New versions of this tool](#changelog)
 1. [Further help](#help)
 
+## Demo
+
+https://2rhop.github.io/checkers/
+
 ## Description
 
 This tool is based on 7-1 pattern for a better distribution of SASS files. It includes by default [bootstrap](https://getbootstrap.com/) and [fontawesome](https://fontawesome.com/) libs for a quick start. It also uses [pug.js](https://pugjs.org/) for HTML code reutilization and [webpack](https://webpack.js.org/) for compiling all assets even for dev or prod modes.
@@ -18,7 +22,7 @@ This tool is based on 7-1 pattern for a better distribution of SASS files. It in
 
 First of all you need to clone this project
 
-> #### `git clone https://github.com/2rhop/html_shell.git`
+> #### `git clone https://github.com/2rhop/checkers.git`
 
 ### For development
 

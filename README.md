@@ -22,7 +22,7 @@ This tool is based on 7-1 pattern for a better distribution of SASS files. It in
 
 First of all you need to clone this project
 
-> #### `git clone https://github.com/2rhop/html_shell.git`
+> #### `git clone https://github.com/2rhop/checkers.git`
 
 ### For development
 

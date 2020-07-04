@@ -1,22 +1,14 @@
-# HTML-Shell
+# Checkers game
 
-## <img align="center" alt="html-shell Logo" src="src/images/app-logo.png" height=80 title="html-shell"/>
-
-### This is an HTML boilerplate for helping creation of small web apps
+### This is a checkers game built in javascript, HTML and CSS
 
 ## Table of topics
 1. [How to install it?](#installation)
-1. [Description](#description)
-1. [New versions of this tool](#changelog)
 1. [Further help](#help)
 
 ## Demo
 
 https://2rhop.github.io/checkers/
-
-## Description
-
-This tool is based on 7-1 pattern for a better distribution of SASS files. It includes by default [bootstrap](https://getbootstrap.com/) and [fontawesome](https://fontawesome.com/) libs for a quick start. It also uses [pug.js](https://pugjs.org/) for HTML code reutilization and [webpack](https://webpack.js.org/) for compiling all assets even for dev or prod modes.
 
 ## Installation
 
@@ -38,15 +30,11 @@ First of all you need to clone this project
 > #### `npm i`
 > #### `npm run build`
 
-The production files will be inside dist/ folder
-
-## Changelog
-
-Get update with all new versions [here](https://github.com/2rhop/html_shell/releases)
+The production files will be inside docs/ folder (this is required for github pages)
 
 ## Licence
-Copyright (c) 2019 Rene Ricardo. Licensed under the [MIT](https://github.com/2rhop/html_shell/blob/master/LICENSE) license.
+Copyright (c) 2019 Rene Ricardo. Licensed under the [MIT](https://github.com/2rhop/checkers/blob/master/LICENSE) license.
 
 ## Help
 
-Send me an [email](mailto:renerp2016@gmail.com) if you have some doubt or just add an [issue](https://github.com/2rhop/html_shell/issues)
+Send me an [email](mailto:renerp2016@gmail.com) if you have some doubt or just add an [issue](https://github.com/2rhop/checkers/issues)

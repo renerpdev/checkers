@@ -32,7 +32,8 @@ export default class AI {
                 console.log("MINI_MAX");
                 var gameState = currentBoardState.gameController;
 
-                const bestMove = minimaxAlphaBeta(gameState, 5, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, gameState.currentPlayerIndex, 0, gameState.currentPlayerIndex);
+                const startDepth = 5; // Increasing this value will make the AI smarter but slower.
+                const bestMove = minimaxAlphaBeta(gameState, startDepth, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, gameState.currentPlayerIndex, 0, gameState.currentPlayerIndex);
                 return [bestMove.move.from, bestMove.move.to];
             default:
                 return null;
@@ -43,11 +44,16 @@ export default class AI {
 /**
  * Helper function. Samples an int between 0 (inclusive) and max (exclusive) from a uniform distribution.
  */
+
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-
+/**
+ * Clones an instance of game-controller.
+ * @param a
+ * @returns {GameController}
+ */
 function cloneGameController(a) {
     const clone = JSON.parse(JSON.stringify(a));
     Object.setPrototypeOf(clone, GameController.prototype);
@@ -83,6 +89,17 @@ const value_of_cell_queen = [
     [2, 2, 2, 2]
 ];
 
+/**
+ * Mini-max algorithm with alpha beta pruning for determining the next move.
+ * @param gameState
+ * @param depth
+ * @param alpha
+ * @param beta
+ * @param player
+ * @param opponent
+ * @param maxi_player
+ * @returns {Score}
+ */
 function minimaxAlphaBeta(gameState, depth, alpha, beta, player, opponent, maxi_player) {
     const possibleMoves = gameState.getAllPossibleMoves();
     const possibleMovesSeparated = [];
@@ -94,12 +111,12 @@ function minimaxAlphaBeta(gameState, depth, alpha, beta, player, opponent, maxi_
     const v = new Score(0, null);
 
     // Base case
+    let v_child = null;
     if (depth === 0 || possibleMovesSeparated.length === 0) {
         return heuristicFunction(gameState);
     } else if (player === maxi_player) {
         v.score = Number.MIN_SAFE_INTEGER;
         for (let i = 0; i < possibleMovesSeparated.length; i++) {
-            var v_child = null;
             const child = cloneGameController(gameState);
             const move = possibleMovesSeparated[i];
             const state = child.handleMove(move.from, move.to);
@@ -121,7 +138,6 @@ function minimaxAlphaBeta(gameState, depth, alpha, beta, player, opponent, maxi_
     } else {
         v.score = Number.MAX_SAFE_INTEGER;
         for (let i = 0; i < possibleMovesSeparated.length; i++) {
-            var v_child = null;
             const child = cloneGameController(gameState);
             const move = possibleMovesSeparated[i];
             const state = child.handleMove(move.from, move.to);
@@ -187,9 +203,7 @@ function heuristicFunction(gameState) {
             }
         }
     }
-
     return new Score(score, null);
-
 }
 
 class Score {

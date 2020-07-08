@@ -21,6 +21,10 @@ export const CHANGE_TURN = 3;
 export const HUMAN = 'HUMAN';
 export const PC = 'PC';
 
+// AI ALGORITHMS
+export const RANDOM = 0;
+export const MINI_MAX = 1;
+
 
 //------------------------------------------------------
 //               TEMPLATES

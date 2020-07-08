@@ -99,7 +99,6 @@ export default class GameUI {
             } else if (KEEP_PLAYING) {
                 console.log('KEEP_PLAYING')
                 this.handleGameState(state);
-                // this.paintBoard(); // may call handleGameState and set state to KEEP_PLAYING
             }
 
         }
@@ -161,7 +160,6 @@ export default class GameUI {
         } else if (state === LOSS) { // if its a LOSS
             this.endGame();
         } else {
-            // Add AI here by checking if the current move is AI's turn.
             const currentPlayer = this.gameController.players[this.gameController.currentPlayerIndex];
             const AIsTurn = currentPlayer.playerType === PC;
             if (AIsTurn) {

@@ -18,19 +18,18 @@ export default class AI {
         this._algorithm = algorithm;
     }
 
-
     getOptimalMove(currentBoardState) {
         switch (this._algorithm) {
             case RANDOM:
                 console.log("RANDOM");
-                var possibleMoves = currentBoardState.gameController.getAllPossibleMoves();
+                let possibleMoves = currentBoardState.gameController.getAllPossibleMoves();
                 const randomPiece = possibleMoves[getRandomInt(possibleMoves.length)];
                 const randomMoveTo = randomPiece.moves.moves[getRandomInt(randomPiece.moves.moves.length)];
 
                 return [randomPiece.coords, randomMoveTo];
             case MINI_MAX:
                 console.log("MINI_MAX");
-                var gameState = currentBoardState.gameController;
+                let gameState = currentBoardState.gameController;
 
                 const startDepth = 5; // Increasing this value will make the AI smarter but slower.
                 const bestMove = minimaxAlphaBeta(gameState, startDepth, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, gameState.currentPlayerIndex, 0, gameState.currentPlayerIndex);
@@ -152,12 +151,10 @@ function minimaxAlphaBeta(gameState, depth, alpha, beta, player, opponent, maxi_
     }
 
     return v;
-
-
 }
 
 function heuristicFunction(gameState) {
-    var score = 0;
+    let score = 0;
     /**
      *
      * Calculate the score in this block
@@ -177,7 +174,6 @@ function heuristicFunction(gameState) {
     }
 
     const template = gameState.gameTemplate;
-
 
     for (let pos_x = 0; pos_x < 8; pos_x++) {
         for (let pos_y = 0; pos_y < 8; pos_y++) {

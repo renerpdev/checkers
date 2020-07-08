@@ -45,7 +45,7 @@ export default class GameUI {
     }
 
     endGame() {
-        this.splashText('Sorry you loose!', 'play again');
+        this.splashText('Sorry you lose!', 'play again');
     }
 
     addDnD() {
@@ -98,7 +98,7 @@ export default class GameUI {
                 this.handleGameState(gameState);
             } else if (KEEP_PLAYING) {
                 console.log('KEEP_PLAYING')
-                this.paintBoard();
+                this.handleGameState(state);
             }
 
         }
@@ -159,6 +159,14 @@ export default class GameUI {
             this.splashText(`Congrats ${bothAreHumans ? winnerName + ' wins' : 'you win'}!`, 'one more')
         } else if (state === LOSS) { // if its a LOSS
             this.endGame();
+        } else {
+            const currentPlayer = this.gameController.players[this.gameController.currentPlayerIndex];
+            const AIsTurn = currentPlayer.playerType === PC;
+            if (AIsTurn) {
+                const move = currentPlayer.getOptimalMove(this);
+                console.log(move);
+                this.handleTurn(move[0], move[1]);
+            }
         }
     }
 
@@ -177,6 +185,7 @@ export default class GameUI {
         const boardRef = this.gameController.gameBoard;
         const templateRef = this.gameController.gameTemplate;
         const possibleMoves = this.gameController.getAllPossibleMoves();
+        console.log(possibleMoves);
         this.boardUI.empty();
         boardRef.forEach((row, i) => {
             row.forEach((cell, j) => {

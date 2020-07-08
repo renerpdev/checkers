@@ -89,7 +89,7 @@ export default class GameController {
     }
 
     isGameEnd() {
-        console.log(this.players[0].romsAmount, this.players[1].romsAmount)
+        // console.log(this.players[0].romsAmount, this.players[1].romsAmount)
         // Verify if the player can moves any rom
         const possibleMoves = this.getAllPossibleMoves();
         // Verify if the player has roms

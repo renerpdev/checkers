@@ -1,8 +1,15 @@
+import {
+    PC,
+    MINI_MAX,
+    RANDOM
+} from './constants'
+import AI from "./ai";
 export default class Player {
     constructor(name, playerType, romColor) {
         this._romsAmount = 12;
         this._name = name;
         this._playerType = playerType;
+        this._ai =  playerType === PC ? new AI(MINI_MAX) : null;
         this._romColor = romColor;
     }
 
@@ -28,5 +35,9 @@ export default class Player {
 
     set romsAmount(value) {
         this._romsAmount = value;
+    }
+
+    getOptimalMove(currentBoardState){
+        return this._ai != null ? this._ai.getOptimalMove(currentBoardState) : null;
     }
 }

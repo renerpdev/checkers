@@ -31,7 +31,7 @@ export default class AI {
                 console.log("MINI_MAX");
                 let gameState = currentBoardState.gameController;
 
-                const startDepth = 5; // Increasing this value will make the AI smarter but slower.
+                const startDepth = 7; // Increasing this value will make the AI smarter but slower.
                 const bestMove = minimaxAlphaBeta(gameState, startDepth, Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, gameState.currentPlayerIndex, 0, gameState.currentPlayerIndex);
                 return [bestMove.move.from, bestMove.move.to];
             default:
@@ -112,8 +112,9 @@ function minimaxAlphaBeta(gameState, depth, alpha, beta, player, opponent, maxi_
     // Base case
     if (depth === 0 || possibleMovesSeparated.length === 0) {
         return heuristicFunction(gameState);
-    } else  {
+    } else {
         v.score = (player === maxi_player) ? Number.MIN_SAFE_INTEGER : Number.MAX_SAFE_INTEGER;
+        v.move = possibleMovesSeparated[getRandomInt(possibleMovesSeparated.length)]; // Default move
         for (let i = 0; i < possibleMovesSeparated.length; i++) {
             let v_child = null;
             const child = cloneGameController(gameState);

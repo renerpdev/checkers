@@ -9,7 +9,6 @@ import {
     RANDOM, DARK_ROM, LIGHT_ROM
 } from './constants'
 import GameController from "./game-controller";
-import GameUI from './game-ui';
 import Player from "./player";
 
 
@@ -25,8 +24,8 @@ export default class AI {
             case RANDOM:
                 console.log("RANDOM");
                 var possibleMoves = currentBoardState.gameController.getAllPossibleMoves();
-                const randomPiece = possibleMoves[_getRandomInt(possibleMoves.length)];
-                const randomMoveTo = randomPiece.moves.moves[_getRandomInt(randomPiece.moves.moves.length)];
+                const randomPiece = possibleMoves[getRandomInt(possibleMoves.length)];
+                const randomMoveTo = randomPiece.moves.moves[getRandomInt(randomPiece.moves.moves.length)];
 
                 return [randomPiece.coords, randomMoveTo];
             case MINI_MAX:
@@ -41,18 +40,13 @@ export default class AI {
     }
 }
 
-function _getRandomInt(max) {
+/**
+ * Helper function. Samples an int between 0 (inclusive) and max (exclusive) from a uniform distribution.
+ */
+function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-
-function clone(a) {
-    /*    Use this for deep copy of current board state     */
-    // return JSON.parse(JSON.stringify(a));
-    const clone = JSON.parse(JSON.stringify(a));
-    Object.setPrototypeOf(clone, GameController.prototype);
-    return clone;
-}
 
 function cloneGameController(a) {
     const clone = JSON.parse(JSON.stringify(a));
@@ -63,8 +57,9 @@ function cloneGameController(a) {
 }
 
 
-/*    MINI_MAX algorithm Variables and functions    */
+/**    MINI_MAX algorithm Variables and functions    **/
 
+// Value of pawns when placed on a specific cell.
 const value_of_cell = [
     [1, 1, 1, 1],
     [2, 2, 2, 3],
@@ -89,7 +84,7 @@ const value_of_cell_queen = [
 ];
 
 function minimaxAlphaBeta(gameState, depth, alpha, beta, player, opponent, maxi_player) {
-    var possibleMoves = gameState.getAllPossibleMoves();
+    const possibleMoves = gameState.getAllPossibleMoves();
     const possibleMovesSeparated = [];
     for (let i = 0; i < possibleMoves.length; i++) {
         for (let j = 0; j < possibleMoves[i].moves.moves.length; j++) {
@@ -101,7 +96,7 @@ function minimaxAlphaBeta(gameState, depth, alpha, beta, player, opponent, maxi_
 
     // Base case
     if (depth === 0 || possibleMovesSeparated.length === 0) {
-        return heuristicFunction(maxi_player, gameState);
+        return heuristicFunction(gameState);
     } else if (player === maxi_player) {
         v.score = Number.MIN_SAFE_INTEGER;
         for (let i = 0; i < possibleMovesSeparated.length; i++) {
@@ -156,7 +151,7 @@ function minimaxAlphaBeta(gameState, depth, alpha, beta, player, opponent, maxi_
 var cc=0;
 
 
-function heuristicFunction(thePlayer, gameState) {
+function heuristicFunction(gameState) {
     var score = 0;
     /**
      *
@@ -164,15 +159,14 @@ function heuristicFunction(thePlayer, gameState) {
      *   basic value of my pawn    = 1;
      *   basic value of my king    = 9;
      * */
-    const opponent = gameState.currentPlayerIndex === 1 ? 0 : 1;
 
     switch (gameState.isGameEnd()) {
         case DRAW:
             return new Score(0, null);
         case LOSS:
-            return new Score(999999999, null);
+            return new Score(Number.MAX_SAFE_INTEGER, null);
         case WIN:
-            return new Score(-999999999, null);
+            return new Score(Number.MIN_SAFE_INTEGER, null);
         default:
             break;
     }
@@ -184,16 +178,14 @@ function heuristicFunction(thePlayer, gameState) {
         for (let pos_y = 0; pos_y < 8; pos_y++) {
             switch (template[pos_y][pos_x]) {
                 case DARK_ROM:
-                    score += 1 * value_of_cell[pos_y][Math.floor(pos_x / 2)];
-                    continue;
-
+                    score += value_of_cell[pos_y][Math.floor(pos_x / 2)];
+                    break;
                 case DARK_QUEEN:
                     score += 9 * value_of_cell_queen[pos_y][Math.floor(pos_x / 2)];
-                    continue;
-
+                    break;
                 case LIGHT_ROM:
-                    score -= 1 * value_of_cell[pos_y][Math.floor(pos_x / 2)];
-                    continue;
+                    score -= value_of_cell[pos_y][Math.floor(pos_x / 2)];
+                    break;
                 case LIGHT_QUEEN:
                     score -= 9 * value_of_cell_queen[pos_y][Math.floor(pos_x / 2)];
             }
@@ -212,7 +204,6 @@ function heuristicFunction(thePlayer, gameState) {
 class Score {
     constructor(score, move) {
         this.score = score;
-        // this.gameState = gameState;
         this.move = move;
     }
 }

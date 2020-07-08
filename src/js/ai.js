@@ -184,10 +184,10 @@ function heuristicFunction(gameState) {
                     score += 9 * value_of_cell_queen[pos_y][Math.floor(pos_x / 2)];
                     break;
                 case LIGHT_ROM:
-                    score -= value_of_cell[pos_y][Math.floor(pos_x / 2)];
+                    score -= value_of_cell[7 - pos_y][3 - Math.floor(pos_x / 2)];
                     break;
                 case LIGHT_QUEEN:
-                    score -= 9 * value_of_cell_queen[pos_y][Math.floor(pos_x / 2)];
+                    score -= 9 * value_of_cell_queen[7 - pos_y][3 - Math.floor(pos_x / 2)];
             }
         }
     }

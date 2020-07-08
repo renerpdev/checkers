@@ -111,12 +111,12 @@ function minimaxAlphaBeta(gameState, depth, alpha, beta, player, opponent, maxi_
     const v = new Score(0, null);
 
     // Base case
-    let v_child = null;
     if (depth === 0 || possibleMovesSeparated.length === 0) {
         return heuristicFunction(gameState);
-    } else if (player === maxi_player) {
-        v.score = Number.MIN_SAFE_INTEGER;
+    } else  {
+        v.score = (player === maxi_player) ? Number.MIN_SAFE_INTEGER : Number.MAX_SAFE_INTEGER;
         for (let i = 0; i < possibleMovesSeparated.length; i++) {
+            let v_child = null;
             const child = cloneGameController(gameState);
             const move = possibleMovesSeparated[i];
             const state = child.handleMove(move.from, move.to);
@@ -124,37 +124,30 @@ function minimaxAlphaBeta(gameState, depth, alpha, beta, player, opponent, maxi_
                 child.changeTurn();
             }
             v_child = minimaxAlphaBeta(child, depth - 1, alpha, beta, opponent, player, maxi_player);
-            if (v_child.score > v.score) {
-                v.score = v_child.score;
-                v.move = move;
+            if (player === maxi_player) {
+                if (v_child.score > v.score) {
+                    v.score = v_child.score;
+                    v.move = move;
+                }
+                if (v.score > alpha) {
+                    alpha = v.score;
+                }
+                if (beta <= alpha) {
+                    return v;
+                }
+            } else {
+                if (v_child.score < v.score) {
+                    v.score = v_child.score;
+                    v.move = move;
+                }
+                if (v.score < beta) {
+                    beta = v.score;
+                }
+                if (beta <= alpha) {
+                    return v;
+                }
             }
-            if (v.score > alpha) {
-                alpha = v.score;
-            }
-            if (beta <= alpha) {
-                return v;
-            }
-        }
-    } else {
-        v.score = Number.MAX_SAFE_INTEGER;
-        for (let i = 0; i < possibleMovesSeparated.length; i++) {
-            const child = cloneGameController(gameState);
-            const move = possibleMovesSeparated[i];
-            const state = child.handleMove(move.from, move.to);
-            if (state === CHANGE_TURN) {
-                child.changeTurn();
-            }
-            v_child = minimaxAlphaBeta(child, depth - 1, alpha, beta, opponent, player, maxi_player);
-            if (v_child.score < v.score) {
-                v.score = v_child.score;
-                v.move = move;
-            }
-            if (v.score < beta) {
-                beta = v.score;
-            }
-            if (beta <= alpha) {
-                return v;
-            }
+
         }
     }
 

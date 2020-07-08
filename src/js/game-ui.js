@@ -45,7 +45,7 @@ export default class GameUI {
     }
 
     endGame() {
-        this.splashText('Sorry you loose!', 'play again');
+        this.splashText('Sorry you lose!', 'play again');
     }
 
     addDnD() {

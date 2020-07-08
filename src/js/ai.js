@@ -91,7 +91,6 @@ function minimaxAlphaBeta(gameState, depth, alpha, beta, player, opponent, maxi_
             possibleMovesSeparated.push({"from": possibleMoves[i].coords, "to": possibleMoves[i].moves.moves[j]})
         }
     }
-    // const statesAfterMoves = applyAll(possibleMoves);
     const v = new Score(0, null);
 
     // Base case
@@ -148,9 +147,6 @@ function minimaxAlphaBeta(gameState, depth, alpha, beta, player, opponent, maxi_
 
 }
 
-var cc=0;
-
-
 function heuristicFunction(gameState) {
     var score = 0;
     /**
@@ -191,11 +187,6 @@ function heuristicFunction(gameState) {
             }
         }
     }
-
-    /* cc+=1;
-    console.log("Counter: " + cc);
-    console.log(template);
-    console.log(score);*/
 
     return new Score(score, null);
 

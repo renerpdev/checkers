@@ -25,13 +25,14 @@ import {
 
 export default class GameController {
 
-    constructor(players) {
+    constructor(players, highlightPieces) {
         this._gameBoard = [];
         this._gameTemplate = [];
         this._validCells = [];
         this._validMoves = [];
         this._players = players;
         this._currentPlayerIndex = 0;
+        this._highlightPieces = highlightPieces;
         this.createBoard();
     }
 
@@ -77,6 +78,10 @@ export default class GameController {
 
     changeTurn() {
         this.currentPlayerIndex = this.currentPlayerIndex === 0 ? 1 : 0;
+    }
+
+    isHighlightPiecesEnabled(){
+        return this._highlightPieces;
     }
 
     restartGame() {

@@ -30,18 +30,19 @@ export default class GameUI {
 
     restartGame() {
         let againstAI = $('#ai')[0];
+        let highlightPieces = $('#highlight-movable').is(':checked');
         againstAI = againstAI !== undefined ? againstAI.checked : false;
         const players = [];
         players.push(new Player('human1', HUMAN, LIGHT));
         players.push(new Player(againstAI ? 'dexter' : 'human2', againstAI ? PC : HUMAN, DARK));
-        this.createGame(players);
+        this.createGame(players, highlightPieces);
         this.gameController.restartGame();
         this.paintBoard();
         $('.game-splash').hide();
     }
 
-    createGame(players) {
-        this.gameController = new GameController(players);
+    createGame(players, highlightPieces= false) {
+        this.gameController = new GameController(players, highlightPieces);
     }
 
     endGame() {
@@ -219,11 +220,13 @@ export default class GameUI {
                 this.boardUI.append(child);
             })
         });
-        possibleMoves.forEach((move, k) => {
-            const [i, j] = move.coords;
-            var child = this.boardUI.children()[i * 8 + j];
-            child.classList.add('board__cell--movable');
-        });
+       if (this.gameController.isHighlightPiecesEnabled()){
+           possibleMoves.forEach((move, k) => {
+               const [i, j] = move.coords;
+               const child = this.boardUI.children()[i * 8 + j];
+               child.classList.add('board__cell--movable');
+           });
+       }
         this.addDnD();
         this.addOnClickEvent();
     }

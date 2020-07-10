@@ -128,12 +128,7 @@ export default class GameController {
                         this.updateCell(x, y, BLANK_CELL);
                         return CHANGE_TURN;
                     } else if (nx <= 7 && ny >= 0) {
-                        const temp = this.gameTemplate[nx][ny];
-                        if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-                            this.players[draggedRom.indexOf(LIGHT) >= 0 ? 1 : 0].beKilled();
-                            state = KEEP_PLAYING;
-                            this.updateCell(nx, ny, BLANK_CELL);
-                        }
+                        state = this.getStateAfterUpdateKillingCells(nx,ny,state,draggedRom)
                     }
                 } else {// TOP LEFT
                     nx = x2 + 1;
@@ -144,12 +139,7 @@ export default class GameController {
                         this.updateCell(x, y, BLANK_CELL);
                         return CHANGE_TURN;
                     } else if (nx <= 7 && ny <= 7) {
-                        const temp = this.gameTemplate[nx][ny];
-                        if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-                            this.players[draggedRom.indexOf(LIGHT) >= 0 ? 1 : 0].beKilled();
-                            state = KEEP_PLAYING;
-                            this.updateCell(nx, ny, BLANK_CELL);
-                        }
+                        state = this.getStateAfterUpdateKillingCells(nx,ny,state,draggedRom)
                     }
                 }
                 this.updateCell(x2, y2, draggedRom);
@@ -165,12 +155,7 @@ export default class GameController {
                         this.updateCell(x, y, BLANK_CELL);
                         return CHANGE_TURN;
                     } else if (nx >= 0 && ny >= 0) {
-                        const temp = this.gameTemplate[nx][ny];
-                        if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-                            this.players[draggedRom.indexOf(LIGHT) >= 0 ? 1 : 0].beKilled();
-                            state = KEEP_PLAYING;
-                            this.updateCell(nx, ny, BLANK_CELL);
-                        }
+                        state = this.getStateAfterUpdateKillingCells(nx,ny,state,draggedRom)
                     }
                 } else {// BOTTOM LEFT
                     nx = x2 - 1;
@@ -181,12 +166,7 @@ export default class GameController {
                         this.updateCell(x, y, BLANK_CELL);
                         return CHANGE_TURN;
                     } else if (nx >= 0 && ny <= 7) {
-                        const temp = this.gameTemplate[nx][ny];
-                        if (temp.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
-                            this.players[draggedRom.indexOf(LIGHT) >= 0 ? 1 : 0].beKilled();
-                            state = KEEP_PLAYING;
-                            this.updateCell(nx, ny, BLANK_CELL);
-                        }
+                        state = this.getStateAfterUpdateKillingCells(nx,ny,state,draggedRom)
                     }
                 }
             }
@@ -212,6 +192,16 @@ export default class GameController {
         return state;
     }
 
+    getStateAfterUpdateKillingCells(x,y,state,draggedRom) {
+        const cell = this.gameTemplate[x][y];
+        if (cell.indexOf(draggedRom.indexOf(DARK) >= 0 ? LIGHT : DARK) >= 0) {// if its a KILL
+            this.players[draggedRom.indexOf(LIGHT) >= 0 ? 1 : 0].beKilled();
+            this.updateCell(x, y, BLANK_CELL);
+            return KEEP_PLAYING;
+        }
+        return state;
+    }
+
     createBoard() {
         let counter, row;
         for (let i = 0; i < 8; i++) {
@@ -219,7 +209,7 @@ export default class GameController {
             this.validCells.push([]);
             // initialize validMoves array
             this.validMoves.push([]);
-            if (i % 2 == 0) {
+            if (i % 2 === 0) {
                 counter = 1;
             } else {
                 counter = 0
@@ -230,7 +220,7 @@ export default class GameController {
                 this.validCells[i].push(false);
                 // initialize validMoves array
                 this.validMoves[i].push([]);
-                if (counter == j) {
+                if (counter === j) {
                     counter += 2;
                     row.push(LIGHT_CELL);
                 } else {

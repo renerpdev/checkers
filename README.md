@@ -8,7 +8,7 @@
 
 ## Demo
 
-[https://2rhop.github.io/checkers/](https://renericardoperez.github.io/checkers/)
+[https://renericardoperez.github.io/checkers/](https://renericardoperez.github.io/checkers/)
 
 ## Installation
 

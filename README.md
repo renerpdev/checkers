@@ -8,13 +8,13 @@
 
 ## Demo
 
-[https://renericardoperez.github.io/checkers/](https://renericardoperez.github.io/checkers/)
+[https://renerpdev.github.io/checkers/](https://renerpdev.github.io/checkers/)
 
 ## Installation
 
 First of all you need to clone this project
 
-> #### `git clone https://github.com/2rhop/checkers.git`
+> #### `git clone https://github.com/renerpdev/checkers.git`
 
 ### For development
 
@@ -33,8 +33,8 @@ First of all you need to clone this project
 The production files will be inside docs/ folder (this is required for github pages)
 
 ## Licence
-Copyright (c) 2019 Rene Ricardo. Licensed under the [MIT](https://github.com/2rhop/checkers/blob/master/LICENSE) license.
+Copyright (c) 2019 Rene Ricardo. Licensed under the [MIT](https://github.com/renerpdev/checkers/blob/master/LICENSE) license.
 
 ## Help
 
-Send me an [email](mailto:renerp2016@gmail.com) if you have some doubt or just add an [issue](https://github.com/2rhop/checkers/issues)
+Send me an [email](mailto:renerp2016@gmail.com) if you have some doubt or just add an [issue](https://github.com/renerpdev/checkers/issues)
